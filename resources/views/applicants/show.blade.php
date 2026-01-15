@@ -20,7 +20,7 @@
                         <i class="bi bi-telephone-fill"></i> {{ $applicant->no_hp_1 }}
                     </span>
                     <span class="profile-meta-item">
-                        <i class="bi bi-calendar3"></i> {{ $applicant->tanggal_lamaran->format('d M Y') }}
+                        <i class="bi bi-calendar3"></i> {{ $applicant->ttl }}
                     </span>
                 </div>
                 <div class="profile-badges">
@@ -116,8 +116,8 @@
                         </span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">Tempat, Tanggal Lahir</span>
-                        <span class="info-value">{{ $applicant->ttl }}</span>
+                        <span class="info-label">Tanggal Lamaran</span>
+                        <span class="info-value">{{ $applicant->tanggal_lamaran->format('d M Y') }}</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">Jenis Kelamin</span>
@@ -246,7 +246,7 @@
                             @break
                         @case('accepted')
                             <span class="badge-status badge-accepted">
-                                <i class="bi bi-trophy"></i> Diterima
+                                <i class="bi bi-check-circle-fill"></i> Diterima
                             </span>
                             @break
                         @case('rejected')
@@ -290,7 +290,7 @@
                             @method('PATCH')
                             <input type="hidden" name="status" value="tested">
                             <button type="submit" class="btn-action-outline secondary">
-                                <i class="bi bi-arrow-counterclockwise"></i> Kembalikan status menjadi Sudah Test
+                                <i class="bi bi-arrow-counterclockwise"></i> Ubah Status menjadi Sudah Test
                             </button>
                         </form>
                     @endif

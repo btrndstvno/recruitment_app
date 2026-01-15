@@ -122,7 +122,7 @@ class ImportController extends Controller
                         'tanggal_lamaran' => $tanggalLamaran ?? now()->format('Y-m-d'),
                         'nama_sekolah' => '-', // Default karena tidak ada di Excel
                         'jurusan' => '-', // Default karena tidak ada di Excel
-                        'tahun_lulus' => '-', // Default karena tidak ada di Excel
+                        'tahun_lulus' => null, // Default karena tidak ada di Excel
                         'catatan' => 'Imported from Excel. Change Date: ' . ($parsedChangeDate ?? '-'),
                         'status' => 'pending',
                     ]);

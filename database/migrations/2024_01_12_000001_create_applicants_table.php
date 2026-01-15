@@ -33,7 +33,7 @@ return new class extends Migration
             // Data Pendidikan
             $table->string('nama_sekolah');
             $table->string('jurusan');
-            $table->year('tahun_lulus');
+            $table->year('tahun_lulus')->nullable();
             $table->decimal('ipk', 3, 2)->nullable();
             
             // Pilihan Tambahan

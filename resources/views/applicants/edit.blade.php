@@ -41,7 +41,7 @@
 
             <div class="row">
                 <div class="col-md-12 mb-3">
-                    <label for="alamat" class="form-label">Alamat <span class="text-danger">*</span></label>
+                    <label for="alamat" class="form-label">Alamat Domisili<span class="text-danger">*</span></label>
                     <textarea class="form-control @error('alamat') is-invalid @enderror" 
                               id="alamat" name="alamat" rows="2" required>{{ old('alamat', $applicant->alamat) }}</textarea>
                     @error('alamat')
@@ -138,8 +138,8 @@
                 <div class="col-md-4 mb-3">
                     <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
                     <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
-                        <option value="pending" {{ old('status', $applicant->status) == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="tested" {{ old('status', $applicant->status) == 'tested' ? 'selected' : '' }}>Sudah Test</option>
+                        <option value="pending"  {{ old('status', $applicant->status) == 'pending'  ? 'selected' : '' }}>Pending</option>
+                        <option value="tested"   {{ old('status', $applicant->status) == 'tested'   ? 'selected' : '' }}>Sudah Test</option>
                         <option value="accepted" {{ old('status', $applicant->status) == 'accepted' ? 'selected' : '' }}>Diterima</option>
                         <option value="rejected" {{ old('status', $applicant->status) == 'rejected' ? 'selected' : '' }}>Ditolak</option>
                     </select>
@@ -186,7 +186,7 @@
                 <div class="col-md-6 mb-3">
                     <label for="ipk" class="form-label">IPK (jika S1)</label>
                     <input type="number" step="0.01" class="form-control @error('ipk') is-invalid @enderror" 
-                           id="ipk" name="ipk" value="{{ old('ipk', $applicant->ipk) }}" min="0" max="4">
+                           id="ipk" name="ipk" value="{{ old('ipk', $applicant->ipk) }}" min="0" max="5">
                     @error('ipk')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

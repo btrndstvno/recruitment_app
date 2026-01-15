@@ -173,7 +173,7 @@
                 <div class="col-md-6 mb-3">
                     <label for="ipk" class="form-label">IPK (jika S1)</label>
                     <input type="number" step="0.01" class="form-control @error('ipk') is-invalid @enderror" 
-                           id="ipk" name="ipk" value="{{ old('ipk') }}" min="0" max="4">
+                           id="ipk" name="ipk" value="{{ old('ipk') }}" min="0" max="5">
                     @error('ipk')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

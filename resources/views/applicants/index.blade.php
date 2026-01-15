@@ -292,7 +292,7 @@
                                             @break
                                         @case('accepted')
                                             <span class="badge-status badge-accepted">
-                                                <i class="bi bi-trophy"></i> Diterima
+                                                <i class="bi bi-check-circle-fill"></i> Diterima
                                             </span>
                                             @break
                                         @case('rejected')

@@ -340,8 +340,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    document.querySelectorAll('.aspek-table td').forEach(td => {
+        const radio = td.querySelector('input[type="radio"]');
+        if (radio) {
+            td.addEventListener('click', function(e) {
+                if (e.target !== radio) {
+                    radio.checked = true;
+                    radio.dispatchEvent(new Event('change'));
+                }
+            });
+        }
+    });
     // Initial calculation
     updateScores();
 });
+
 </script>
 @endpush

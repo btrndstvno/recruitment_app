@@ -46,9 +46,7 @@ class ApplicantController extends Controller
                 $query->where('is_pkl', true);
             } elseif ($request->tipe === 'reguler') {
                 $query->where('is_guru', false)->where('is_pkl', false);
-            } 
-
-            
+            }    
         }
 
         // Status filter
@@ -63,7 +61,7 @@ class ApplicantController extends Controller
         } else {
             // Filter by month if provided
             if ($request->filled('bulan')) {
-                $query->whereMonth('tanggal_lamaran', (int)$request->bulan);
+                $query->whereMonth('tanggal_lamaran', $request->bulan);
             }
             // Filter by year if provided
             if ($request->filled('tahun')) {
@@ -71,8 +69,8 @@ class ApplicantController extends Controller
             }
         }
         // Logika Sorting Dinamis
-        $sortColumn = $request->get('sort', 'nama_lengkap'); // Default column
-        $sortDirection = $request->get('direction', 'asc'); // Default direction
+        $sortColumn = $request->get('sort', 'nama_lengkap'); 
+        $sortDirection = $request->get('direction', 'asc'); 
 
         // Whitelist kolom yang diizinkan untuk mencegah error/sql injection
         $allowedColumns = ['nama_lengkap', 'tanggal_lamaran', 'created_at'];
@@ -83,8 +81,8 @@ class ApplicantController extends Controller
             $query->orderBy('nama_lengkap', 'asc');
         }
 
-        $applicants = $query->paginate(10)->appends($request->query());
-
+        $applicants = $query->paginate(15)->appends($request->query());
+        
         return view('applicants.index', compact('applicants'));
     }
 
@@ -112,12 +110,12 @@ class ApplicantController extends Controller
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
             'gender' => 'required|in:Laki-laki,Perempuan',
-            'umur' => 'required|integer|min:15|max:100',
+            'umur' => 'required|integer|min:15',
             'tanggal_lamaran' => 'required|date',
             'nama_sekolah' => 'required|string|max:255',
             'jurusan' => 'required|string|max:255',
             'tahun_lulus' => 'required|integer|min:1950',
-            'ipk' => 'nullable|numeric|min:0|max:4',
+            'ipk' => 'nullable|numeric|min:0|max:5',
             'is_guru' => 'boolean',
             'is_pkl' => 'boolean',
             'pkl_awal' => 'nullable|required_if:is_pkl,1|date',
@@ -202,12 +200,12 @@ class ApplicantController extends Controller
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
             'gender' => 'required|in:Laki-laki,Perempuan',
-            'umur' => 'required|integer|min:15|max:100',
+            'umur' => 'required|integer|min:15',
             'tanggal_lamaran' => 'required|date',
             'nama_sekolah' => 'required|string|max:255',
             'jurusan' => 'required|string|max:255',
             'tahun_lulus' => 'required|integer|min:1950',
-            'ipk' => 'nullable|numeric|min:0|max:4',
+            'ipk' => 'nullable|numeric|min:0|max:5',
             'is_guru' => 'boolean',
             'is_pkl' => 'boolean',
             'pkl_awal' => 'nullable|required_if:is_pkl,1|date',

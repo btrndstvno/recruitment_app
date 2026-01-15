@@ -99,10 +99,6 @@
             <span class="topbar-brand">Recruitment PT Adiputro</span>
 
             <div class="d-flex align-items-center gap-3 pe-3">
-        {{-- Tombol Dark Mode --}}
-        <button id="darkModeToggle" class="btn btn-link text-dark p-0" title="Toggle Dark Mode">
-            <i class="bi bi-moon-stars-fill" id="darkModeIcon"></i>
-        </button>
         
         <div class="topbar-profile d-lg-none">
             <span class="topbar-avatar">
