@@ -3,9 +3,35 @@
 @section('title', request('archived') == '1' ? 'Arsip Pelamar - Recruitment App' : 'Daftar Pelamar - Recruitment App')
 
 @section('content')
+    @php
+        function getSortUrl($column) {
+            $currentSort = request('sort');
+            $currentDir = request('direction', 'desc');
+            
+            // Jika kolom sama diklik, balik arahnya (asc <-> desc). Jika beda, default asc.
+            $newDir = ($currentSort == $column && $currentDir == 'asc') ? 'desc' : 'asc';
+            
+            // Merge query string yang ada (filter) dengan sort baru
+            return route('applicants.index', array_merge(request()->query(), ['sort' => $column, 'direction' => $newDir]));
+        }
+
+        function getSortIcon($column) {
+            $currentSort = request('sort');
+            $currentDir = request('direction', 'desc');
+
+            if ($currentSort !== $column) {
+                return '<i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em; opacity: 0.5;"></i>';
+            }
+
+            return $currentDir == 'asc' 
+                ? '<i class="bi bi-sort-alpha-down ms-1 text-primary"></i>' 
+                : '<i class="bi bi-sort-alpha-down-alt ms-1 text-primary"></i>';
+        }
+    @endphp
 {{-- Welcome Card --}}
 <div class="welcome-card fade-in-up">
     <div class="d-flex align-items-center justify-content-between">
+        {{-- Sisi Kiri: Ucapan Selamat Datang --}}
         <div class="d-flex align-items-center">
             <span class="welcome-icon">👋</span>
             <div>
@@ -13,10 +39,12 @@
                 <small class="text-muted">Selamat datang di Recruitment Adiputro</small>
             </div>
         </div>
+
+        {{-- Jam Realtime --}}
         <div class="realtime-clock text-end">
             <div class="clock-time" id="clockTime">00:00:00</div>
             <div class="clock-date" id="clockDate">Senin, 13 Januari 2026</div>
-        </div>
+        </div>  
     </div>
 </div>
 
@@ -200,9 +228,21 @@
                     <thead>
                         <tr>
                             <th class="text-center" style="width: 60px; min-width: 60px;">No</th>
-                            <th>Nama Pelamar</th>
+                            <th>
+                                <a href="{{ getSortUrl('nama_lengkap') }}" 
+                                    class="text-decoration-none text-dark d-flex align-items-center justify-content-between w-100">
+                                    <span>Nama Pelamar</span>
+                                    {!! getSortIcon('nama_lengkap') !!}
+                                </a>
+                            </th>
                             <th>No. Telp</th>
-                            <th class="d-none d-lg-table-cell">Tanggal Melamar</th>
+                            <th class="d-none d-lg-table-cell">
+                                <a href="{{ getSortUrl('tanggal_lamaran') }}" 
+                                    class="text-decoration-none text-dark d-flex align-items-center justify-content-between w-100">
+                                    <span>Tanggal Melamar</span>
+                                    {!! getSortIcon('tanggal_lamaran') !!}
+                                </a>
+                            </th>
                             <th>Status</th>
                             <th style="width: 80px">Aksi</th>
                         </tr>

@@ -70,8 +70,21 @@ class ApplicantController extends Controller
                 $query->whereYear('tanggal_lamaran', $request->tahun);
             }
         }
+        // Logika Sorting Dinamis
+        $sortColumn = $request->get('sort', 'nama_lengkap'); // Default column
+        $sortDirection = $request->get('direction', 'asc'); // Default direction
 
-        $applicants = $query->orderBy('created_at', 'desc')->paginate(10)->appends($request->query());
+        // Whitelist kolom yang diizinkan untuk mencegah error/sql injection
+        $allowedColumns = ['nama_lengkap', 'tanggal_lamaran', 'created_at'];
+
+        if (in_array($sortColumn, $allowedColumns)) {
+            $query->orderBy($sortColumn, $sortDirection);
+        } else {
+            $query->orderBy('nama_lengkap', 'asc');
+        }
+
+        $applicants = $query->paginate(10)->appends($request->query());
+
         return view('applicants.index', compact('applicants'));
     }
 

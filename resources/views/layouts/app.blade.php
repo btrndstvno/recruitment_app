@@ -97,11 +97,19 @@
                 <i class="bi bi-list"></i>
             </button>
             <span class="topbar-brand">Recruitment PT Adiputro</span>
-            <div class="topbar-profile">
-                <span class="topbar-avatar">
-                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                </span>
-            </div>
+
+            <div class="d-flex align-items-center gap-3 pe-3">
+        {{-- Tombol Dark Mode --}}
+        <button id="darkModeToggle" class="btn btn-link text-dark p-0" title="Toggle Dark Mode">
+            <i class="bi bi-moon-stars-fill" id="darkModeIcon"></i>
+        </button>
+        
+        <div class="topbar-profile d-lg-none">
+            <span class="topbar-avatar">
+                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+            </span>
+        </div>
+    </div>
         </nav>
 
         {{-- Page Content --}}
@@ -264,14 +272,23 @@
     </script>
     @endif
 
-    {{-- Validation Errors (from withErrors) --}}
+    {{-- Validation Errors di resources/views/layouts/app.blade.php --}}
     @if($errors->any() && !session('error'))
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            let errorMessage = "";
+
+            @if($errors->has('password'))
+                errorMessage = "Password atau konfirmasi password Anda tidak valid.";
+            @else
+                // Jika bukan Password, tampilkan error pertama dari Laravel
+                errorMessage = @json($errors->first());
+            @endif
+
             Swal.fire({
                 icon: 'error',
                 title: 'Validasi Gagal!',
-                text: 'Password / konfirmasi password tidak valid.',
+                text: errorMessage,
                 showConfirmButton: true,
                 confirmButtonColor: '#dc3545'
             });
