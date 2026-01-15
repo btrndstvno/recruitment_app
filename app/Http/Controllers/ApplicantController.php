@@ -63,7 +63,7 @@ class ApplicantController extends Controller
         } else {
             // Filter by month if provided
             if ($request->filled('bulan')) {
-                $query->whereMonth('tanggal_lamaran', $request->bulan);
+                $query->whereMonth('tanggal_lamaran', (int)$request->bulan);
             }
             // Filter by year if provided
             if ($request->filled('tahun')) {
