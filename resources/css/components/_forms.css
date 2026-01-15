@@ -1,0 +1,30 @@
+/* ============================================
+   MODERN FORM CONTROLS
+   ============================================ */
+
+.form-control,
+.form-select {
+    border-radius: var(--border-radius-sm);
+    border: 2px solid var(--border-color);
+    padding: 0.6rem var(--spacing-md);
+    transition: var(--transition-base);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+}
+
+.input-group-text {
+    border-radius: var(--border-radius-sm);
+    border: 2px solid var(--border-color);
+    background: var(--color-light);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-sm);
+}

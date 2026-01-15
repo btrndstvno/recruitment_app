@@ -1,0 +1,118 @@
+/* ============================================
+   FILTER SECTION
+   ============================================ */
+
+.filter-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+}
+
+.filter-card .card-body {
+    padding: var(--spacing-lg);
+}
+
+.filter-section {
+    margin-bottom: 0;
+}
+
+.filter-section-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.filter-section-title i {
+    font-size: 0.9rem;
+}
+
+.filter-divider {
+    margin: var(--spacing-lg) 0;
+    border: none;
+    border-top: 1px dashed #dee2e6;
+}
+
+.filter-or-badge {
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+    color: var(--text-muted);
+    padding: var(--spacing-xs) 0.75rem;
+    border-radius: 20px;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ============================================
+   SEARCH INPUT GROUP
+   ============================================ */
+.input-group-search {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+}
+
+.input-group-search .input-group-text {
+    background: var(--color-light);
+    border: 1px solid var(--border-color);
+    border-right: none;
+    color: var(--text-muted);
+}
+
+.input-group-search .form-control {
+    border: 1px solid var(--border-color);
+    border-left: none;
+}
+
+.input-group-search .form-control:focus {
+    box-shadow: none;
+    border-color: var(--color-primary);
+}
+
+.input-group-search .form-control:focus + .input-group-text,
+.input-group-search:focus-within .input-group-text:first-child {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+/* ============================================
+   FILTER FORM LABELS & CONTROLS
+   ============================================ */
+.filter-card .form-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.filter-card .form-label i {
+    color: var(--color-primary);
+}
+
+.filter-card .form-control,
+.filter-card .form-select {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9rem;
+    transition: var(--transition-base);
+}
+
+.filter-card .form-control:focus,
+.filter-card .form-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.filter-card .form-control:disabled,
+.filter-card .form-select:disabled {
+    background-color: var(--color-light);
+    opacity: 0.6;
+}

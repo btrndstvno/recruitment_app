@@ -1,0 +1,213 @@
+/* ============================================
+   MODERN BUTTONS
+   ============================================ */
+
+.btn {
+    border-radius: var(--border-radius-sm);
+    font-weight: 500;
+    padding: var(--spacing-sm) 1.25rem;
+    transition: var(--transition-base);
+}
+
+.btn-primary {
+    background: var(--primary-gradient);
+    border: none;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.35);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.45);
+    background: var(--primary-gradient);
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-gradient);
+    border-color: transparent;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background: var(--success-gradient);
+    border: none;
+}
+
+.btn-danger {
+    background: var(--danger-gradient);
+    border: none;
+}
+
+.btn-info {
+    background: var(--info-gradient);
+    border: none;
+}
+
+.btn-outline-danger {
+    border: 2px solid var(--color-danger-light);
+    color: var(--color-danger-light);
+}
+
+.btn-outline-danger:hover {
+    background: var(--danger-gradient);
+    border-color: transparent;
+}
+
+.btn-action {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    border-radius: var(--border-radius-sm);
+}
+
+/* ============================================
+   RESET BUTTON
+   ============================================ */
+.btn-reset {
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    border: 2px solid var(--color-danger);
+    color: var(--color-danger);
+    font-weight: 600;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    transition: var(--transition-smooth);
+}
+
+.btn-reset:hover {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    border-color: var(--color-danger);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.btn-reset i {
+    transition: transform 0.3s ease;
+}
+
+.btn-reset:hover i {
+    transform: rotate(-180deg);
+}
+
+/* ============================================
+   LARGE ACTION BUTTONS (Detail Page)
+   ============================================ */
+.btn-action-lg {
+    width: 100%;
+    padding: 0.875rem var(--spacing-md);
+    font-weight: 600;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    transition: var(--transition-smooth);
+    border: none;
+    font-size: var(--font-size-base);
+}
+
+.btn-action-lg:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-accept {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.btn-accept:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: white;
+}
+
+.btn-reject {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.btn-reject:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white;
+}
+
+/* ============================================
+   OUTLINE ACTION BUTTONS
+   ============================================ */
+.btn-action-outline {
+    width: 100%;
+    padding: 0.75rem var(--spacing-md);
+    font-weight: 500;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    transition: var(--transition-smooth);
+    background: white;
+    font-size: 0.9rem;
+}
+
+.btn-action-outline:hover {
+    transform: translateY(-1px);
+}
+
+.btn-action-outline.primary {
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+}
+
+.btn-action-outline.primary:hover {
+    background: var(--primary-gradient);
+    border-color: transparent;
+    color: white;
+}
+
+.btn-action-outline.info {
+    border: 2px solid var(--color-info);
+    color: var(--color-info);
+}
+
+.btn-action-outline.info:hover {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    border-color: transparent;
+    color: white;
+}
+
+.btn-action-outline.success {
+    border: 2px solid #10b981;
+    color: #10b981;
+}
+
+.btn-action-outline.success:hover {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-color: transparent;
+    color: white;
+}
+
+.btn-action-outline.danger {
+    border: 2px solid #ef4444;
+    color: #ef4444;
+}
+
+.btn-action-outline.danger:hover {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border-color: transparent;
+    color: white;
+}
+
+.btn-action-outline.secondary {
+    border: 2px solid var(--color-muted);
+    color: var(--color-muted);
+}
+
+.btn-action-outline.secondary:hover {
+    background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);
+    border-color: transparent;
+    color: white;
+}

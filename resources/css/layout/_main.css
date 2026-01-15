@@ -1,0 +1,100 @@
+/* ============================================
+   MAIN WRAPPER LAYOUT
+   ============================================ */
+
+.main-wrapper {
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: var(--sidebar-transition);
+}
+
+.main-wrapper.expanded {
+    margin-left: var(--sidebar-collapsed-width);
+}
+
+.main-content {
+    flex: 1;
+    padding: var(--spacing-lg) var(--spacing-xl);
+}
+
+/* ============================================
+   MAIN FOOTER
+   ============================================ */
+.main-footer {
+    padding: var(--spacing-md) var(--spacing-xl);
+    text-align: center;
+    color: var(--text-muted);
+    background: var(--card-bg);
+    border-top: 1px solid var(--border-color);
+}
+
+/* ============================================
+   FOOTER (General)
+   ============================================ */
+footer {
+    background: var(--card-bg);
+    border-top: 1px solid var(--border-color);
+}
+
+/* ============================================
+   MOBILE TOPBAR
+   ============================================ */
+.topbar {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--primary-gradient);
+    color: white;
+}
+
+.topbar-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--border-radius-sm);
+    font-size: 1.25rem;
+    cursor: pointer;
+}
+
+.topbar-brand {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.topbar-avatar {
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* ============================================
+   LAYOUT RESPONSIVE
+   ============================================ */
+@media (max-width: 991.98px) {
+    .main-wrapper {
+        margin-left: 0;
+    }
+    
+    .main-wrapper.expanded {
+        margin-left: 0;
+    }
+    
+    .topbar {
+        display: flex;
+    }
+    
+    .main-content {
+        padding: var(--spacing-md);
+    }
+}

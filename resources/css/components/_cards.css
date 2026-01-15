@@ -1,0 +1,382 @@
+/* ============================================
+   MODERN CARDS
+   ============================================ */
+
+.card {
+    border: none;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-smooth);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.card-header {
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0 !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* ============================================
+   WELCOME CARD
+   ============================================ */
+.welcome-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+    border: none;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.welcome-card h4 {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.welcome-card .welcome-icon {
+    font-size: 2.5rem;
+    margin-right: var(--spacing-md);
+}
+
+/* ============================================
+   REAL-TIME CLOCK
+   ============================================ */
+.realtime-clock {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--border-radius-md);
+    color: rgb(0, 0, 0);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.realtime-clock .clock-time {
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-family: 'Segoe UI', monospace;
+    letter-spacing: 2px;
+    line-height: 1.2;
+}
+
+.realtime-clock .clock-date {
+    font-size: var(--font-size-sm);
+    opacity: 0.9;
+    margin-top: 0.25rem;
+}
+
+/* ============================================
+   TABLE CONTAINER (No Scroll)
+   ============================================ */
+.table-container {
+    width: 100%;
+    overflow: hidden;
+}
+
+/* ============================================
+   MODERN TABLE
+   ============================================ */
+.table-modern {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.table-modern thead th {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: none;
+    padding: 0.875rem 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.table-modern thead th:first-child {
+    border-radius: var(--border-radius-md) 0 0 0;
+    text-align: center;
+}
+
+.table-modern thead th:last-child {
+    border-radius: 0 var(--border-radius-md) 0 0;
+}
+
+.table-modern tbody tr {
+    transition: var(--transition-base);
+}
+
+.table-modern tbody tr:hover {
+    background-color: rgba(102, 126, 234, 0.05);
+}
+
+.table-modern tbody td {
+    padding: 0.875rem 0.75rem;
+    border-bottom: 1px solid var(--border-color-light);
+    vertical-align: middle;
+}
+
+.table-modern tbody td:first-child {
+    white-space: nowrap;
+    text-align: center;
+}
+
+.table-modern tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ============================================
+   APPLICANT INFO (Table Cell)
+   ============================================ */
+.applicant-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.applicant-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--border-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.applicant-avatar.male {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.applicant-avatar.female {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.applicant-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.applicant-meta {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ============================================
+   MOBILE CARD VIEW FOR APPLICANTS
+   ============================================ */
+.applicant-list-mobile {
+    display: flex;
+    flex-direction: column;
+}
+
+.applicant-card-mobile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    text-decoration: none;
+    color: inherit;
+    border-bottom: 1px solid var(--border-color-light);
+    transition: var(--transition-fast);
+}
+
+.applicant-card-mobile:hover {
+    background-color: rgba(102, 126, 234, 0.05);
+}
+
+.applicant-card-mobile:last-child {
+    border-bottom: none;
+}
+
+.applicant-card-left {
+    flex-shrink: 0;
+}
+
+.applicant-card-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.applicant-card-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.applicant-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.applicant-card-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.applicant-card-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+/* Mobile Badge */
+.badge-mobile {
+    padding: 0.35rem 0.6rem;
+    border-radius: var(--border-radius-pill);
+    font-weight: 600;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* ============================================
+   BULK ACTION BAR
+   ============================================ */
+.bulk-action-bar {
+    position: fixed;
+    bottom: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius-pill);
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    z-index: 1050;
+    transition: bottom 0.3s ease;
+}
+
+.bulk-action-bar.show {
+    bottom: 30px;
+}
+
+.bulk-action-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+    font-weight: 500;
+}
+
+.bulk-action-info i {
+    font-size: 1.25rem;
+}
+
+.bulk-action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.bulk-action-buttons .btn {
+    white-space: nowrap;
+}
+
+/* ============================================
+   SELECTABLE AVATAR STYLES
+   ============================================ */
+.selectable-avatar {
+    position: relative;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.selectable-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.selectable-avatar .avatar-initials {
+    transition: opacity 0.2s ease;
+}
+
+.selectable-avatar .avatar-check {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(40, 167, 69, 0.95);
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.selectable-avatar .avatar-check i {
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.selectable-avatar.selected .avatar-initials {
+    opacity: 0;
+}
+
+.selectable-avatar.selected .avatar-check {
+    opacity: 1;
+}
+
+.selectable-avatar.selected {
+    box-shadow: 0 0 0 3px #28a745, 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+/* Selected Row Highlight */
+.selectable-row.selected {
+    background-color: rgba(40, 167, 69, 0.08) !important;
+}
+
+.selectable-card.selected {
+    background-color: rgba(40, 167, 69, 0.08) !important;
+}
+
+/* Mobile adjustments for bulk action bar */
+@media (max-width: 576px) {
+    .bulk-action-bar {
+        left: 1rem;
+        right: 1rem;
+        transform: none;
+        padding: 0.625rem 1rem;
+        gap: 0.75rem;
+        border-radius: var(--border-radius-md);
+    }
+
+    .bulk-action-info span {
+        display: none;
+    }
+
+    .bulk-action-buttons .btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .bulk-action-buttons .btn span {
+        display: none;
+    }
+}
