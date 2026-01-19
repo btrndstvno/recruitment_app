@@ -134,6 +134,14 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+                <div class="col-md-6 mb-3">
+                    <label for="tanggal_test" class="form-label">Tanggal Test <span class="text-danger"></span></label>
+                    <input type="date" class="form-control @error('tanggal_test') is-invalid @enderror" 
+                           id="tanggal_test" name="tanggal_test" value="{{ old('tanggal_test', date('Y-m-d')) }}">
+                    @error('tanggal_test')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
 
             {{-- Data Pendidikan --}}

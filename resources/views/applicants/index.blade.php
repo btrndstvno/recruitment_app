@@ -108,7 +108,7 @@
                         <select class="form-select" id="tipe" name="tipe">
                             <option value="">Semua Tipe</option>
                             <option value="guru" {{ request('tipe') == 'guru' ? 'selected' : '' }}>👨‍🏫 Guru</option>
-                            <option value="pkl" {{ request('tipe') == 'pkl' ? 'selected' : '' }}>🎓 PKL</option>
+                            <option value="pkl" {{ request('tipe') == 'pkl' ? 'selected' : '' }}>🎓PKL</option>
                             <option value="reguler" {{ request('tipe') == 'reguler' ? 'selected' : '' }}>👤 Reguler</option>
                         </select>
                     </div>
@@ -121,7 +121,7 @@
                             <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>⏳ Pending</option>
                             <option value="tested" {{ request('status') == 'tested' ? 'selected' : '' }}>✅ Sudah Test</option>
                             <option value="accepted" {{ request('status') == 'accepted' ? 'selected' : '' }}>🎉 Diterima</option>
-                            <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>❌ Ditolak</option>
+                            <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}> Ditolak</option>
                         </select>
                     </div>
                     <!-- <div class="col-lg-2 col-md-6 col-6">
@@ -237,10 +237,10 @@
                             </th>
                             <th>No. Telp</th>
                             <th class="d-none d-lg-table-cell">
-                                <a href="{{ getSortUrl('tanggal_lamaran') }}" 
+                                <a href="{{ getSortUrl('tanggal_test') }}" 
                                     class="text-decoration-none text-dark d-flex align-items-center justify-content-between w-100">
-                                    <span>Tanggal Melamar</span>
-                                    {!! getSortIcon('tanggal_lamaran') !!}
+                                    <span>Tanggal test</span>
+                                    {!! getSortIcon('tanggal_test') !!}
                                 </a>
                             </th>
                             <th>Status</th>
@@ -276,7 +276,7 @@
                                 </td>
                                 <td class="d-none d-lg-table-cell">
                                     <i class="bi bi-calendar3 me-1 text-muted"></i>
-                                    {{ $applicant->tanggal_lamaran->format('d M Y') }}
+                                    {{ $applicant->tanggal_test ? $applicant->tanggal_test->format('d M Y') : '-' }}
                                 </td>
                                 <td>
                                     @switch($applicant->status)
@@ -329,7 +329,7 @@
                                 <div class="applicant-card-name">{{ $applicant->nama_lengkap }}</div>
                                 <div class="applicant-card-meta">
                                     <span><i class="bi bi-geo-alt"></i> {{ $applicant->kota }}</span>
-                                    <span><i class="bi bi-calendar3"></i> {{ $applicant->tanggal_lamaran->format('d M Y') }}</span>
+                                    <span><i class="bi bi-calendar3"></i> {{ $applicant->tanggal_test ? $applicant->tanggal_test->format('d M Y') : '-' }}</span>
                                 </div>
                             </a>
                             <div class="applicant-card-right">

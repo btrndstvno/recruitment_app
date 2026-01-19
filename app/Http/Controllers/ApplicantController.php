@@ -22,20 +22,19 @@ class ApplicantController extends Controller
             $query->whereNull('archived_at');
         }
 
-        // Search filter
+        // Search filter dengan checklist field
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('nama_lengkap', 'like', "%{$search}%")
-                  ->orWhere('no_hp_1', 'like', "%{$search}%")
-                  ->orWhere('no_hp_2', 'like', "%{$search}%")
-                  ->orWhere('alamat', 'like', "%{$search}%")
-                  ->orWhere('kota', 'like', "%{$search}%")
-                  ->orWhere('provinsi', 'like', "%{$search}%")
-                  ->orWhere('no_ktp', 'like', "%{$search}%")
-                  ->orWhere('nama_sekolah', 'like', "%{$search}%")
-                  ->orWhere('jurusan', 'like', "%{$search}%");
-            });
+            $fields = (array) $request->input('search_fields', ['nama_lengkap','alamat','no_hp_1','no_ktp']);
+            $allowedFields = ['nama_lengkap', 'alamat', 'no_hp_1', 'no_ktp'];
+            $fields = array_intersect($fields, $allowedFields);
+            if (count($fields) > 0) {
+                $query->where(function ($q) use ($search, $fields) {
+                    foreach ($fields as $field) {
+                        $q->orWhere($field, 'like', "%{$search}%");
+                    }
+                });
+            }
         }
 
         // Type filter (Guru/PKL/eguler)
@@ -112,6 +111,7 @@ class ApplicantController extends Controller
             'gender' => 'required|in:Laki-laki,Perempuan',
             'umur' => 'required|integer|min:15',
             'tanggal_lamaran' => 'required|date',
+            'tanggal_test' => 'nullable|date',
             'nama_sekolah' => 'required|string|max:255',
             'jurusan' => 'required|string|max:255',
             'tahun_lulus' => 'required|integer|min:1950',
@@ -202,6 +202,7 @@ class ApplicantController extends Controller
             'gender' => 'required|in:Laki-laki,Perempuan',
             'umur' => 'required|integer|min:15',
             'tanggal_lamaran' => 'required|date',
+            'tanggal_test' => 'required|date',
             'nama_sekolah' => 'required|string|max:255',
             'jurusan' => 'required|string|max:255',
             'tahun_lulus' => 'required|integer|min:1950',

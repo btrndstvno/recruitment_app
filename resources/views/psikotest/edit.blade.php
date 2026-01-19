@@ -40,8 +40,8 @@
 </div>
 
 <div class="card mb-4">
-    <div class="card-header bg-dark text-white">
-        <i class="bi bi-file-earmark-text me-2"></i>LAPORAN PSIKOTEST
+    <div class="card-header text-center">
+        LAPORAN PSIKOTEST
     </div>
     <div class="card-body">
         {{-- Header Info --}}

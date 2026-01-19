@@ -15,21 +15,9 @@
         background-color: #e9ecef;
         font-weight: bold;
     }
-    .score-circle {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background-color: #0d6efd;
-        color: white;
-        font-weight: bold;
-        font-size: 12px;
-    }
     @media print {
         @page {
-            size: A4;
+            size: F4;
             margin: 10mm;
         }
         body {
@@ -55,8 +43,8 @@
             padding: 3px !important;
         }
         .card-header {
-            background-color: #000 !important;
-            color: #fff !important;
+            background-color: #ffffff !important;
+            color: #000000 !important;
             padding: 3px !important;
         }
         .card-header h4 {
@@ -77,11 +65,6 @@
         }
         .aspek-table th, .aspek-table td {
             padding: 1px 2px !important;
-        }
-        .score-circle {
-            width: 14px;
-            height: 14px;
-            font-size: 8px;
         }
         .mb-4 {
             margin-bottom: 3px !important;
@@ -141,8 +124,8 @@
 </div>
 
 <div class="card mb-4">
-    <div class="card-header bg-dark text-white text-center">
-        <h4 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>LAPORAN PSIKOTEST</h4>
+    <div class="card-header text-center">
+        <h4 class="mb-0">LAPORAN PSIKOTEST</h4>
     </div>
     <div class="card-body">
         {{-- Header Info --}}
@@ -182,16 +165,30 @@
             <i class="bi bi-lightbulb me-2"></i>Intelligence Quotient (IQ)
         </h5>
         <div class="row mb-4">
-            <div class="col-md-6">
-                <table class="table table-bordered">
-                    <tr>
-                        <th width="40%">Skor IQ</th>
-                        <td>{{ $report->iq_score ?? '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Kategori</th>
-                        <td>{{ $report->iq_category_label }}</td>
-                    </tr>
+            <div class="col-12">
+                <table class="table table-bordered" style="width:100%;table-layout:fixed;margin-bottom:0;">
+                    <thead>
+                        <tr>
+                            <th style="width:14%;text-align:center;">Kateogri<br>IQ</th>
+                            <th style="width:12%;text-align:center;">Borderline<br>70-79</th>
+                            <th style="width:12%;text-align:center;">Dibawah Rata-Rata<br>80-89</th>
+                            <th style="width:12%;text-align:center;">Rata-Rata<br>90-109</th>
+                            <th style="width:12%;text-align:center;">Diatas Rata-Rata<br>110-119</th>
+                            <th style="width:12%;text-align:center;">Superior<br>120-139</th>
+                            <th style="width:12%;text-align:center;">Very Superior<br>140-169</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align:center;">IQ</td>
+                            <td style="text-align:center;">@if($report->iq_category == 'borderline') {{ $report->iq_score }} @endif</td>
+                            <td style="text-align:center;">@if($report->iq_category == 'dibawah_rata_rata') {{ $report->iq_score }} @endif</td>
+                            <td style="text-align:center;">@if($report->iq_category == 'rata_rata') {{ $report->iq_score }} @endif</td>
+                            <td style="text-align:center;">@if($report->iq_category == 'diatas_rata_rata') {{ $report->iq_score }} @endif</td>
+                            <td style="text-align:center;">@if($report->iq_category == 'superior') {{ $report->iq_score }} @endif</td>
+                            <td style="text-align:center;">@if($report->iq_category == 'very_superior') {{ $report->iq_score }} @endif</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -226,13 +223,13 @@
                         @for($i = 1; $i <= 5; $i++)
                         <td>
                             @if($report->$field == $i)
-                                <span class="score-circle">{{ $i }}</span>
+                                X
                             @endif
                         </td>
                         @endfor
                         <td>
                             @if($report->$field === null)
-                                <span class="text-muted">N/A</span>
+                                X
                             @endif
                         </td>
                     </tr>
@@ -258,13 +255,13 @@
                         @for($i = 1; $i <= 5; $i++)
                         <td>
                             @if($report->$field == $i)
-                                <span class="score-circle">{{ $i }}</span>
+                                X
                             @endif
                         </td>
                         @endfor
                         <td>
                             @if($report->$field === null)
-                                <span class="text-muted">N/A</span>
+                                X
                             @endif
                         </td>
                     </tr>
@@ -289,13 +286,13 @@
                         @for($i = 1; $i <= 5; $i++)
                         <td>
                             @if($report->$field == $i)
-                                <span class="score-circle">{{ $i }}</span>
+                                X
                             @endif
                         </td>
                         @endfor
                         <td>
                             @if($report->$field === null)
-                                <span class="text-muted">N/A</span>
+                                X
                             @endif
                         </td>
                     </tr>
@@ -326,7 +323,7 @@
         </h5>
         <div class="p-3 bg-light border rounded kesimpulan-box">
             @if($report->kesimpulan_saran)
-                <p class="mb-0">{{ $report->kesimpulan_saran }}</p>
+                <p class="mb-0">{!! nl2br(e($report->kesimpulan_saran)) !!}</p>
             @else
                 <p class="text-muted mb-0">Belum ada kesimpulan dan saran.</p>
             @endif

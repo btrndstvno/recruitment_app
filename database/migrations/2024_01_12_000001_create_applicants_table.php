@@ -29,6 +29,9 @@ return new class extends Migration
             
             // Data Lamaran
             $table->date('tanggal_lamaran');
+
+            // Data Test
+            $table->date('tanggal_test')->nullable();
             
             // Data Pendidikan
             $table->string('nama_sekolah');

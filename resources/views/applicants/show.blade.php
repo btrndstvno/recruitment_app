@@ -88,12 +88,8 @@
                         <span class="info-value">{{ $applicant->alamat }}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">Kota</span>
-                        <span class="info-value">{{ $applicant->kota }}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Provinsi</span>
-                        <span class="info-value">{{ $applicant->provinsi }}</span>
+                        <span class="info-label">Kota & Provinsi</span>
+                        <span class="info-value">{{ $applicant->kota }}, {{ $applicant->provinsi }}</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">No. HP 1</span>
@@ -118,6 +114,10 @@
                     <div class="info-item">
                         <span class="info-label">Tanggal Lamaran</span>
                         <span class="info-value">{{ $applicant->tanggal_lamaran->format('d M Y') }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Tanggal Test</span>
+                        <span class="info-value">{{ $applicant->tanggal_test?->format('d M Y') ?? '-' }}</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">Jenis Kelamin</span>

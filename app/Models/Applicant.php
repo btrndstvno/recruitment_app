@@ -22,6 +22,7 @@ class Applicant extends Model
         'gender',
         'umur',
         'tanggal_lamaran',
+        'tanggal_test',
         'nama_sekolah',
         'jurusan',
         'tahun_lulus',
@@ -40,6 +41,7 @@ class Applicant extends Model
     protected $casts = [
         'tanggal_lahir' => 'date',
         'tanggal_lamaran' => 'date',
+        'tanggal_test' => 'date',
         'pkl_awal' => 'date',
         'pkl_akhir' => 'date',
         'is_guru' => 'boolean',
@@ -55,12 +57,31 @@ class Applicant extends Model
         return $this->hasOne(PsikotestReport::class);
     }
 
+
     /**
      * Get full TTL (Tempat Tanggal Lahir)
      */
     public function getTtlAttribute()
     {
         return $this->tempat_lahir . ', ' . $this->tanggal_lahir->format('d F Y');
+    }
+
+    /**
+     * Get dynamic age (umur) based on tanggal_lahir dan hari sekarang
+     */
+    public function getUmurAttribute()
+    {
+        if (!$this->tanggal_lahir) return null;
+        $today = now();
+        $birthDate = $this->tanggal_lahir;
+        $age = $today->year - $birthDate->year;
+        if (
+            $today->month < $birthDate->month ||
+            ($today->month == $birthDate->month && $today->day < $birthDate->day)
+        ) {
+            $age--;
+        }
+        return $age;
     }
 
     /**
