@@ -100,6 +100,50 @@
                                 <span class="spinner-border spinner-border-sm text-primary"></span>
                             </span>
                         </div>
+                        {{-- LOGIKA PHP UNTUK MENENTUKAN STATUS CENTANG --}}
+                        @php
+                            // Ambil data dari URL
+                            $searchFields = request('search_fields');
+                            
+                            // Cek apakah User sedang memfilter spesifik?
+                            // Jika $searchFields adalah array dan ada isinya, berarti User memilih filter tertentu.
+                            // Jika null (URL bersih), berarti User baru datang -> Default Centang Semua.
+                            $isAllSelected = is_null($searchFields); 
+                        @endphp
+
+                        {{-- Checkbox Filter Search --}}
+                        <div class="d-flex gap-3 align-items-center flex-wrap">
+                            <small class="text-muted fst-italic me-1" style="font-size: 0.85em;">Cari di:</small>
+                            
+                            <div class="form-check form-check-inline m-0">
+                                {{-- PENTING: Tambahkan name="search_fields[]" agar form native tetap jalan --}}
+                                <input class="form-check-input search-field-cb" type="checkbox" 
+                                    id="sf_nama" name="search_fields[]" value="nama_lengkap"
+                                    {{ $isAllSelected || in_array('nama_lengkap', $searchFields ?? []) ? 'checked' : '' }}>
+                                <label class="form-check-label small" for="sf_nama">Nama</label>
+                            </div>
+                            
+                            <div class="form-check form-check-inline m-0">
+                                <input class="form-check-input search-field-cb" type="checkbox" 
+                                    id="sf_ktp" name="search_fields[]" value="no_ktp"
+                                    {{ $isAllSelected || in_array('no_ktp', $searchFields ?? []) ? 'checked' : '' }}>
+                                <label class="form-check-label small" for="sf_ktp">No. KTP</label>
+                            </div>
+
+                            <div class="form-check form-check-inline m-0">
+                                <input class="form-check-input search-field-cb" type="checkbox" 
+                                    id="sf_hp" name="search_fields[]" value="no_hp_1"
+                                    {{ $isAllSelected || in_array('no_hp_1', $searchFields ?? []) ? 'checked' : '' }}>
+                                <label class="form-check-label small" for="sf_hp">No. HP</label>
+                            </div>
+
+                            <div class="form-check form-check-inline m-0">
+                                <input class="form-check-input search-field-cb" type="checkbox" 
+                                    id="sf_alamat" name="search_fields[]" value="alamat"
+                                    {{ $isAllSelected || in_array('alamat', $searchFields ?? []) ? 'checked' : '' }}>
+                                <label class="form-check-label small" for="sf_alamat">Alamat</label>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-lg-3 col-md-6 col-6">
                         <label for="tipe" class="form-label">
@@ -388,34 +432,150 @@ document.addEventListener('DOMContentLoaded', function() {
     const tanggalInput = document.getElementById('tanggal');
     const bulanSelect = document.getElementById('bulan');
     const tahunSelect = document.getElementById('tahun');
-    const filterForm = document.getElementById('filterForm');
     const searchLoading = document.getElementById('searchLoading');
-    
-    let debounceTimer;
-    
-    function submitFilter() {
-        // Show loading indicator
-        searchLoading.classList.remove('d-none');
+
+    // --- FUNGSI UTAMA SUBMIT FILTER (AJAX) ---
+    window.submitFilter = function(pageUrl = null) {
+        // 1. Tampilkan Loading
+        if(searchLoading) searchLoading.classList.remove('d-none');
+
+        // 2. Tentukan URL Dasar (Default index atau URL Pagination)
+        let url = pageUrl ? pageUrl : '{{ route("applicants.index") }}';
         
-        // Build URL with query parameters
-        const params = new URLSearchParams();
-        if (searchInput.value) params.set('search', searchInput.value);
-        if (tipeSelect.value) params.set('tipe', tipeSelect.value);
-        if (statusSelect.value) params.set('status', statusSelect.value);
-        // Date filtering: tanggal spesifik OR bulan/tahun
+        // 3. Setup Parameters
+        // Jika pageUrl ada (klik pagination), ambil params bawaan dari link tersebut dulu
+        const params = new URLSearchParams(pageUrl ? (new URL(pageUrl)).search : window.location.search);
+        
+        // 4. Update Params dari Input Form (Override params lama)
+        // Kita set ulang agar jika user mengetik/ganti filter, nilai baru yang dipakai
+        if (searchInput.value) params.set('search', searchInput.value); else params.delete('search');
+        if (tipeSelect.value) params.set('tipe', tipeSelect.value); else params.delete('tipe');
+        if (statusSelect.value) params.set('status', statusSelect.value); else params.delete('status');
+
+        // --- LOGIKA CHECKBOX SEARCH FIELDS ---
+        // A. Hapus parameter lama agar tidak duplikat/bertumpuk
+        params.delete('search_fields[]');
+        
+        // B. Ambil kondisi checkbox saat ini
+        const checkboxes = document.querySelectorAll('.search-field-cb:checked');
+        const totalCheckboxes = document.querySelectorAll('.search-field-cb').length;
+
+        // C. Logika Pengiriman "Pintar":
+        // - Jika User pilih SEMUA (length == total) -> Jangan kirim param (Default Controller: Cari Semua) -> URL Bersih
+        // - Jika User pilih SEBAGIAN (0 < length < total) -> Kirim param spesifik
+        // - Jika User TIDAK pilih (length == 0) -> Jangan kirim param (Default Controller)
+        
+        if (checkboxes.length > 0 && checkboxes.length < totalCheckboxes) {
+            checkboxes.forEach(cb => {
+                params.append('search_fields[]', cb.value);
+            });
+        }
+
+        // 5. Date Filters
         if (tanggalInput.value) {
             params.set('tanggal', tanggalInput.value);
+            // Hapus bulan/tahun jika tanggal spesifik dipilih
+            params.delete('bulan');
+            params.delete('tahun');
         } else {
-            if (bulanSelect.value) params.set('bulan', bulanSelect.value);
-            if (tahunSelect.value) params.set('tahun', tahunSelect.value);
+            params.delete('tanggal'); // Hapus tanggal jika kosong
+            if (bulanSelect.value) params.set('bulan', bulanSelect.value); else params.delete('bulan');
+            if (tahunSelect.value) params.set('tahun', tahunSelect.value); else params.delete('tahun');
         }
-        // Always keep archived=1 if in archive page
+        
+        // 6. Archive Handling (Tetap di arsip jika sedang di halaman arsip)
         if ("{{ request('archived') }}" == "1") {
             params.set('archived', '1');
         }
-        // Navigate to filtered URL
-        window.location.href = '{{ route("applicants.index") }}' + (params.toString() ? '?' + params.toString() : '');
+
+        // 7. Bentuk URL Final
+        // split('?')[0] memastikan kita hanya mengambil base URL tanpa query string ganda
+        const finalUrl = `${url.split('?')[0]}?${params.toString()}`;
+
+        // --- EKSEKUSI AJAX ---
+        fetch(finalUrl, {
+            headers: { 
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html'
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.text();
+        })
+        .then(html => {
+            // A. Ganti Isi Tabel dengan HTML Baru
+            const container = document.getElementById('applicant-list-container');
+            if(container) container.innerHTML = html;
+            
+            // B. Update URL Browser (Agar bisa di-refresh tanpa hilang filter)
+            window.history.pushState(null, '', finalUrl);
+            
+            // C. Re-Init Listeners (Sangat Penting! Karena elemen HTML baru kehilangan event listener lama)
+            reinitListeners(); 
+            
+            // D. Sembunyikan Loading
+            if(searchLoading) searchLoading.classList.add('d-none');
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            if(searchLoading) searchLoading.classList.add('d-none');
+        });
     }
+
+    // --- FUNGSI PENDUKUNG: RE-INIT LISTENERS ---
+    // Wajib dipanggil setelah AJAX sukses agar Pagination & Klik Avatar tetap jalan
+    function reinitListeners() {
+        // 1. Pagination Links
+        document.querySelectorAll('.pagination a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                submitFilter(this.href); // Panggil submitFilter dengan URL halaman tujuan
+            });
+        });
+
+        // 2. Avatar Selection (Jika fitur bulk action ada)
+        document.querySelectorAll('.selectable-avatar').forEach(avatar => {
+            avatar.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                // Pastikan fungsi toggleSelection ada di scope global/dapat diakses
+                if (typeof toggleSelection === 'function') {
+                    toggleSelection(parseInt(this.dataset.id), this);
+                }
+            });
+        });
+
+        // 3. Update UI Seleksi (Memastikan item yang dicentang tetap terlihat terpilih)
+        if (typeof updateSelectionUI === 'function') {
+            updateSelectionUI();
+        }
+    }
+
+    // --- INISIALISASI AWAL ---
+    // Pasang listener saat halaman pertama kali dimuat
+    
+    // Listener untuk Input Ketik (Debounce biar ga spam request)
+    let debounceTimer;
+    if(searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => submitFilter(), 500);
+        });
+    }
+
+    // Listener untuk Dropdown & Date
+    [tipeSelect, statusSelect, bulanSelect, tahunSelect, tanggalInput].forEach(el => {
+        if(el) el.addEventListener('change', () => submitFilter());
+    });
+
+    // Listener untuk Checkbox Search Fields
+    document.querySelectorAll('.search-field-cb').forEach(cb => {
+        cb.addEventListener('change', () => submitFilter());
+    });
+
+    // Init Listener Pagination bawaan (saat load pertama)
+    reinitListeners();
     
     // Toggle bulan/tahun disabled state based on tanggal
     function toggleDateFilters() {
