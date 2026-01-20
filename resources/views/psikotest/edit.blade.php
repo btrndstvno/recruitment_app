@@ -32,16 +32,18 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2><i class="bi bi-pencil-square me-2"></i>Edit Laporan Psikotest</h2>
     <div class="d-flex gap-2 align-items-center">
+    @if(Auth::user()->role === 'admin')
         <div class="btn-group no-print" role="group" aria-label="Tipe Laporan">
             <a href="{{ route('psikotest.edit', ['applicant' => $applicant, 'type' => '34']) }}" 
                class="btn {{ $reportType == '34' ? 'btn-primary' : 'btn-outline-primary' }}">
-                34 Pertanyaan
+                Tipe 34
             </a>
             <a href="{{ route('psikotest.edit', ['applicant' => $applicant, 'type' => '38']) }}" 
                class="btn {{ $reportType == '38' ? 'btn-primary' : 'btn-outline-primary' }}">
-                38 Pertanyaan
+                Tipe 38
             </a>
         </div>
+    @endif
         <a href="{{ route('applicants.show', $applicant) }}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-1"></i>Kembali
         </a>

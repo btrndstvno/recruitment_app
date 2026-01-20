@@ -307,10 +307,12 @@
             </div>
             <div class="action-body">
                 <div class="d-grid gap-2">
-                    <a href="{{ route('applicants.edit', $applicant) }}" class="btn-action-outline primary">
-                        <i class="bi bi-pencil-square"></i> Edit Data Pelamar
-                    </a>
-                    
+                    @if(Auth::user()->role === 'hrd' || Auth::user()->role === 'admin')
+                        <a href="{{ route('applicants.edit', $applicant) }}" class="btn-action-outline primary">
+                            <i class="bi bi-pencil-square"></i> Edit Data Pelamar
+                        </a>
+                    @endif
+                    @if(Auth::user()->role === 'admin')
                     @if($applicant->psikotestReport)
                         <a href="{{ route('psikotest.show', $applicant) }}" class="btn-action-outline info">
                             <i class="bi bi-file-earmark-text"></i> Lihat Laporan Psikotest
@@ -323,16 +325,19 @@
                             <i class="bi bi-clipboard-plus"></i> Isi Laporan Psikotest
                         </a>
                     @endif
+                        @endif
 
                     <hr class="my-2">
 
-                    <form action="{{ route('applicants.destroy', $applicant) }}" method="POST" data-confirm="true">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn-action-outline danger">
-                            <i class="bi bi-trash3"></i> Hapus Data Pelamar
-                        </button>
-                    </form>
+                    @if(Auth::user()->role === 'admin')
+                        <form action="{{ route('applicants.destroy', $applicant) }}" method="POST" data-confirm="true">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn-action-outline danger">
+                                <i class="bi bi-trash3"></i> Hapus Data Pelamar
+                            </button>
+                        </form>
+                    @endif
                 </div>
             </div>
         </div>

@@ -22,13 +22,39 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'HRD Admin',
                 'password' => Hash::make('12345678'),
+                'role' => 'admin',
             ]
         );
         User::updateOrCreate(
             ['email'=> 'teshrd2@company.com'],
             [
-                'name' => "HRD 2", 
+                'name' => "HRD 1", 
                 'password' => Hash::make('11111111'),
+                'role' => 'hrd',
+            ]
+        );
+        User::updateOrCreate(
+            ['email' => 'teshrd3@company.com'],
+            [
+                'name' => 'HRD 2',
+                'password' => Hash::make('11111111'),
+                'role' => 'hrd',
+            ]
+        );
+        User::updateOrCreate(
+            ['email' => 'teshrd4@company.com'],
+            [
+                'name' => 'HRD 3',
+                'password' => Hash::make('11111111'),
+                'role' => 'hrd',
+            ]
+        );
+        User::updateOrCreate(
+            ['email' => 'teshrd5@company.com'],
+            [
+                'name' => 'HRD 4',
+                'password' => Hash::make('11111111'),
+                'role' => 'hrd',
             ]
         );
     }

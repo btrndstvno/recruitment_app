@@ -56,9 +56,11 @@
         <button onclick="window.print()" class="btn btn-outline-primary me-2">
             <i class="bi bi-printer me-1"></i>Cetak
         </button>
+        @if(Auth::user()->role === 'admin')
         <a href="{{ route('psikotest.edit', $applicant) }}" class="btn btn-primary me-2">
             <i class="bi bi-pencil me-1"></i>Edit
         </a>
+        @endif
         <a href="{{ route('applicants.show', $applicant) }}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-1"></i>Kembali
         </a>
