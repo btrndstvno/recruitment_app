@@ -154,7 +154,7 @@
                     </tr>
                     <tr>
                         <th>Tanggal Test</th>
-                        <td>: {{ $report->tanggal_test->format('d F Y') }}</td>
+                        <td>: {{ $applicant->tanggal_test ? \Carbon\Carbon::parse($applicant->tanggal_test)->format('d F Y') : '-' }}</td>
                     </tr>
                 </table>
             </div>
@@ -245,8 +245,8 @@
                     </tr>
                     @php
                         $reportType = $report->report_type ?? '34';
-                        $aspekBFields = $reportType == '38' 
-                            ? \App\Models\PsikotestReport::getAspekBFields38() 
+                        $aspekBFields = $reportType == '38'
+                            ? \App\Models\PsikotestReport::getAspekBFields38()
                             : \App\Models\PsikotestReport::getAspekBFields();
                     @endphp
                     @foreach($aspekBFields as $field => $label)
@@ -276,8 +276,8 @@
                         <td colspan="7"><strong>C. Kepribadian Dan Sikap Kerja</strong></td>
                     </tr>
                     @php
-                        $aspekCFields = $reportType == '38' 
-                            ? \App\Models\PsikotestReport::getAspekCFields38() 
+                        $aspekCFields = $reportType == '38'
+                            ? \App\Models\PsikotestReport::getAspekCFields38()
                             : \App\Models\PsikotestReport::getAspekCFields();
                     @endphp
                     @foreach($aspekCFields as $field => $label)

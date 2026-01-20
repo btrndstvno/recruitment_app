@@ -77,6 +77,10 @@
                         <th>Pendidikan</th>
                         <td>: {{ $applicant->pendidikan }}</td>
                     </tr>
+                    <tr>
+                        <th>Tanggal Test</th>
+                        <td>: {{ $applicant->tanggal_test ? \Carbon\Carbon::parse($applicant->tanggal_test)->format('d F Y') : '-' }}</td>
+                    </tr>
                 </table>
             </div>
         </div>
@@ -85,16 +89,7 @@
             @csrf
             <input type="hidden" name="report_type" value="{{ $reportType }}">
 
-            <div class="row mb-4">
-                <div class="col-md-4">
-                    <label for="tanggal_test" class="form-label">Tanggal Test <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control @error('tanggal_test') is-invalid @enderror" 
-                           id="tanggal_test" name="tanggal_test" value="{{ old('tanggal_test', date('Y-m-d')) }}" required>
-                    @error('tanggal_test')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
+
 
             {{-- IQ Section --}}
             <h5 class="border-bottom pb-2 mb-3 text-primary">

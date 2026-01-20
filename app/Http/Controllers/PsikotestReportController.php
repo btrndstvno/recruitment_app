@@ -52,7 +52,7 @@ class PsikotestReportController extends Controller
     /**
      * Show the form for editing the psikotest report.
      */
-    public function edit(Applicant $applicant)
+    public function edit(Request $request, Applicant $applicant)
     {
         $report = $applicant->psikotestReport;
 
@@ -61,9 +61,23 @@ class PsikotestReportController extends Controller
                 ->with('info', 'Laporan psikotest belum ada, silakan buat baru.');
         }
 
-        $reportType = $report->report_type ?? '34';
+        // Ambil tipe dari query jika ada, default ke tipe report yang sudah ada
+        $reportType = $request->get('type', $report->report_type ?? '34');
+        if (!in_array($reportType, ['34', '38'])) {
+            $reportType = '34';
+        }
 
-        return view('psikotest.edit', compact('applicant', 'report', 'reportType'));
+        // Untuk aspek B, siapkan field sesuai tipe
+        $aspekBFields = $reportType == '38'
+            ? \App\Models\PsikotestReport::getAspekBFields38()
+            : \App\Models\PsikotestReport::getAspekBFields();
+
+        // Untuk aspek C, siapkan field sesuai tipe
+        $aspekCFields = $reportType == '38'
+            ? \App\Models\PsikotestReport::getAspekCFields38()
+            : \App\Models\PsikotestReport::getAspekCFields();
+
+        return view('psikotest.edit', compact('applicant', 'report', 'reportType', 'aspekBFields', 'aspekCFields'));
     }
 
     /**
@@ -77,8 +91,14 @@ class PsikotestReportController extends Controller
             return redirect()->route('psikotest.create', $applicant);
         }
 
-        $reportType = $report->report_type ?? '34';
+        // Ambil tipe dari request, default ke tipe lama
+        $reportType = $request->input('report_type', $report->report_type ?? '34');
+        if (!in_array($reportType, ['34', '38'])) {
+            $reportType = '34';
+        }
+
         $validated = $this->validateReport($request, $reportType);
+        $validated['report_type'] = $reportType;
 
         // Calculate scores based on report type
         $validated = $this->calculateScores($validated, $reportType);

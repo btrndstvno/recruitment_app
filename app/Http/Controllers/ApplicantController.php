@@ -202,7 +202,7 @@ class ApplicantController extends Controller
             'gender' => 'required|in:Laki-laki,Perempuan',
             'umur' => 'required|integer|min:15',
             'tanggal_lamaran' => 'required|date',
-            'tanggal_test' => 'required|date',
+            'tanggal_test' => 'nullable|date',
             'nama_sekolah' => 'required|string|max:255',
             'jurusan' => 'required|string|max:255',
             'tahun_lulus' => 'required|integer|min:1950',

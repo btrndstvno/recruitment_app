@@ -32,7 +32,16 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2><i class="bi bi-pencil-square me-2"></i>Edit Laporan Psikotest</h2>
     <div class="d-flex gap-2 align-items-center">
-        <span class="badge bg-secondary no-print">{{ $reportType }} Pertanyaan</span>
+        <div class="btn-group no-print" role="group" aria-label="Tipe Laporan">
+            <a href="{{ route('psikotest.edit', ['applicant' => $applicant, 'type' => '34']) }}" 
+               class="btn {{ $reportType == '34' ? 'btn-primary' : 'btn-outline-primary' }}">
+                34 Pertanyaan
+            </a>
+            <a href="{{ route('psikotest.edit', ['applicant' => $applicant, 'type' => '38']) }}" 
+               class="btn {{ $reportType == '38' ? 'btn-primary' : 'btn-outline-primary' }}">
+                38 Pertanyaan
+            </a>
+        </div>
         <a href="{{ route('applicants.show', $applicant) }}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-1"></i>Kembali
         </a>
@@ -68,6 +77,10 @@
                         <th>Pendidikan</th>
                         <td>: {{ $applicant->pendidikan }}</td>
                     </tr>
+                    <tr>
+                        <th>Tanggal Test</th>
+                        <td>: {{ $applicant->tanggal_test ? \Carbon\Carbon::parse($applicant->tanggal_test)->format('d F Y') : '-' }}</td>
+                    </tr>
                 </table>
             </div>
         </div>
@@ -75,18 +88,9 @@
         <form action="{{ route('psikotest.update', $applicant) }}" method="POST" data-loading="true">
             @csrf
             @method('PUT')
+            <input type="hidden" name="report_type" value="{{ $reportType }}">
 
-            <div class="row mb-4">
-                <div class="col-md-4">
-                    <label for="tanggal_test" class="form-label">Tanggal Test <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control @error('tanggal_test') is-invalid @enderror" 
-                           id="tanggal_test" name="tanggal_test" 
-                           value="{{ old('tanggal_test', $report->tanggal_test->format('Y-m-d')) }}" required>
-                    @error('tanggal_test')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
+
 
             {{-- IQ Section --}}
             <h5 class="border-bottom pb-2 mb-3 text-primary">
