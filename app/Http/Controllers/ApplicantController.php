@@ -82,6 +82,12 @@ class ApplicantController extends Controller
 
         $applicants = $query->paginate(50)->appends($request->query());
         
+        if ($request->ajax()) {
+            return view('applicants._list', compact('applicants'))->render();
+        }
+
+        // Jika request biasa (buka halaman pertama kali), 
+        // kembalikan halaman penuh (index.blade.php)
         return view('applicants.index', compact('applicants'));
     }
 
