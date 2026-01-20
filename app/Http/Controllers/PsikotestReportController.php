@@ -33,9 +33,11 @@ class PsikotestReportController extends Controller
     public function store(Request $request, Applicant $applicant)
     {
         $reportType = $request->input('report_type', '34');
+
         $validated = $this->validateReport($request, $reportType);
         $validated['applicant_id'] = $applicant->id;
         $validated['report_type'] = $reportType;
+        $validated['tanggal_test'] = $applicant->tanggal_test;
 
         // Calculate scores based on report type
         $validated = $this->calculateScores($validated, $reportType);
@@ -130,7 +132,7 @@ class PsikotestReportController extends Controller
     private function validateReport(Request $request, string $reportType = '34')
     {
         $rules = [
-            'tanggal_test' => 'required|date',
+            // 'tanggal_test' => 'required|date', // diambil dari applicant, tidak perlu validasi di sini
             'iq_score' => 'nullable|integer|min:50|max:200',
             'iq_category' => 'nullable|in:borderline,dibawah_rata_rata,rata_rata,diatas_rata_rata,superior,very_superior',
             // A. Kemampuan Intelektual Umum
