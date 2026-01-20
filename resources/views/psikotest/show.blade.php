@@ -25,7 +25,7 @@
         .card-header { background-color: #ffffff !important; color: #000000 !important; padding: 3px !important; }
         .card-header h4 { font-size: 14px !important; margin: 0 !important; }
         h5 { font-size: 11px !important; margin-bottom: 3px !important; padding-bottom: 2px !important; }
-        .table { font-size: 9px !important; margin-bottom: 3px !important; }
+        .table { font-size: 10px !important;  }
         .table th, .table td { padding: 2px !important; }
         .aspek-table th, .aspek-table td { padding: 2px !important; }
         .mb-4 { margin-bottom: 3px !important; }
@@ -44,7 +44,6 @@
             min-height: 80px !important;
             page-break-inside: auto !important;
         }
-        footer { display: none !important; }
     }
 </style>
 @endpush
@@ -106,15 +105,15 @@
             </div>
 
             {{-- IQ Section --}}
-            <h5 class="border-bottom pb-2 mb-3 text-primary">
-                <i class="bi bi-lightbulb me-2"></i>Intelligence Quotient (IQ)
+            <h5 class="border-bottom pb-2 mb-3 text-primary" style="color: #000 !important;">
+                <span class="w-100 d-block text-center" style="color: #000 !important;">KATEGORI</span>
             </h5>
             <div class="row mb-4">
                 <div class="col-12">
                     <table class="table table-bordered" style="width:100%;table-layout:fixed;margin-bottom:0;">
                         <thead>
                             <tr>
-                                <th style="width:14%;text-align:center;">Kateogri<br>IQ</th>
+                                <th style="width:14%;text-align:left; vertical-align:top;">Taraf</th>
                                 <th style="width:12%;text-align:center;">Borderline<br>70-79</th>
                                 <th style="width:12%;text-align:center;">Dibawah Rata-Rata<br>80-89</th>
                                 <th style="width:12%;text-align:center;">Rata-Rata<br>90-109</th>
@@ -125,13 +124,13 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td style="text-align:center;">IQ</td>
-                                <td style="text-align:center;">@if($report->iq_category == 'borderline') {{ $report->iq_score }} @endif</td>
-                                <td style="text-align:center;">@if($report->iq_category == 'dibawah_rata_rata') {{ $report->iq_score }} @endif</td>
-                                <td style="text-align:center;">@if($report->iq_category == 'rata_rata') {{ $report->iq_score }} @endif</td>
-                                <td style="text-align:center;">@if($report->iq_category == 'diatas_rata_rata') {{ $report->iq_score }} @endif</td>
-                                <td style="text-align:center;">@if($report->iq_category == 'superior') {{ $report->iq_score }} @endif</td>
-                                <td style="text-align:center;">@if($report->iq_category == 'very_superior') {{ $report->iq_score }} @endif</td>
+                                <td style="text-align:left;font-weight:bold;">Intelligence Quotient</td>
+                                <td style="text-align:center;font-weight:bold;">@if($report->iq_category == 'borderline') {{ $report->iq_score }} @endif</td>
+                                <td style="text-align:center;font-weight:bold;">@if($report->iq_category == 'dibawah_rata_rata') {{ $report->iq_score }} @endif</td>
+                                <td style="text-align:center;font-weight:bold;">@if($report->iq_category == 'rata_rata') {{ $report->iq_score }} @endif</td>
+                                <td style="text-align:center;font-weight:bold;">@if($report->iq_category == 'diatas_rata_rata') {{ $report->iq_score }} @endif</td>
+                                <td style="text-align:center;font-weight:bold;">@if($report->iq_category == 'superior') {{ $report->iq_score }} @endif</td>
+                                <td style="text-align:center;font-weight:bold;">@if($report->iq_category == 'very_superior') {{ $report->iq_score }} @endif</td>
                             </tr>
                         </tbody>
                     </table>
@@ -139,9 +138,6 @@
             </div>
 
             {{-- Aspek Psikologis Table --}}
-            <h5 class="border-bottom pb-2 mb-3 text-primary">
-                <i class="bi bi-table me-2"></i>Aspek Psikologis
-            </h5>
             <div class="table-responsive">
                 <table class="table table-bordered aspek-table">
                     <thead class="table-light">
@@ -256,12 +252,29 @@
             {{-- Keterangan Skala --}}
             <div class="mt-3 mb-4 keterangan-skala">
                 <strong>Keterangan Skala:</strong>
-                A = 1 = Kurang | B = 2 = Hampir Cukup | C = 3 = Cukup | D = 4 = Cukup Baik | E = 5 = Baik
+                <table style="font-size: inherit; margin-top: 2px;">
+                    <tr>
+                        <td style="padding-right: 16px;">A = 1</td>
+                        <td style="padding-right: 16px;">Kurang</td>
+                        <td style="padding-right: 16px;">C = 3</td>
+                        <td style="padding-right: 16px;">Cukup</td>
+                        <td style="padding-right: 16px;">E = 5</td>
+                        <td>Baik</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-right: 16px;">B = 2</td>
+                        <td style="padding-right: 16px;">Hampir Cukup</td>
+                        <td style="padding-right: 16px;">D = 4</td>
+                        <td style="padding-right: 16px;">Cukup Baik</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
             </div>
         </div>
         {{-- Kesimpulan dan Saran --}}
-        <h5 class="border-bottom pb-2 mb-3 text-primary">
-            <i class="bi bi-chat-left-text me-2"></i>Kesimpulan dan Saran
+        <h5 class="border-bottom pb-2 mb-3 text-primary" style="color: #000 !important;">
+            Kesimpulan dan Saran
         </h5>
         <div class="p-3 bg-light border rounded kesimpulan-box">
             @if($report->kesimpulan_saran)
