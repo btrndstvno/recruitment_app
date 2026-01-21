@@ -130,6 +130,7 @@ class ApplicantController extends Controller
             'pkl_jurusan' => 'nullable|required_if:is_pkl,1|string|max:255',
             'pkl_tempat' => 'nullable|required_if:is_pkl,1|string|max:255',
             'catatan' => 'nullable|string',
+            'color_code' => 'nullable|in:merah,kuning,biru,hijau,ungu,hitam',
         ],[
             'no_ktp.digits' => 'No. KTP harus terdiri dari 16 digit angka.',
         ]);
@@ -167,6 +168,7 @@ class ApplicantController extends Controller
         $validated['is_guru'] = $request->has('is_guru');
         $validated['is_pkl'] = $request->has('is_pkl');
 
+        // color_code sudah termasuk di $fillable
         Applicant::create($validated);
 
         return redirect()->route('applicants.index')
@@ -222,6 +224,7 @@ class ApplicantController extends Controller
             'pkl_tempat' => 'nullable|required_if:is_pkl,1|string|max:255',
             'catatan' => 'nullable|string',
             'status' => 'required|in:pending,tested,accepted,rejected',
+            'color_code' => 'nullable|in:merah,kuning,biru,hijau,ungu,hitam',
         ], [
             'no_ktp.unique' => 'No. KTP ini sudah digunakan oleh pelamar lain.',
             'no_ktp.digits' => 'No. KTP harus terdiri dari 16 digit angka.',
@@ -230,6 +233,7 @@ class ApplicantController extends Controller
         $validated['is_guru'] = $request->has('is_guru');
         $validated['is_pkl'] = $request->has('is_pkl');
 
+        // color_code sudah termasuk di $fillable
         $applicant->update($validated);
 
         // Preserve query parameters (page, filters) when redirecting

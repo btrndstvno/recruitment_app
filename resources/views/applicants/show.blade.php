@@ -11,7 +11,21 @@
                 {{ strtoupper(substr($applicant->nama_lengkap, 0, 2)) }}
             </div>
             <div class="profile-info">
-                <h1 class="profile-name">{{ $applicant->nama_lengkap }}</h1>
+                <h1 class="profile-name d-flex align-items-center gap-2">
+                    {{ $applicant->nama_lengkap }}
+                    @if($applicant->color_code)
+                        <span title="Color Code" style="display:inline-block;width:22px;height:22px;border-radius:50%;border:2px solid #eee;
+                            background:
+                                {{
+                                    $applicant->color_code == 'merah' ? '#e74c3c' :
+                                    ($applicant->color_code == 'kuning' ? '#f1c40f' :
+                                    ($applicant->color_code == 'biru' ? '#3498db' :
+                                    ($applicant->color_code == 'hijau' ? '#27ae60' :
+                                    ($applicant->color_code == 'ungu' ? '#8e44ad' :
+                                    ($applicant->color_code == 'hitam' ? '#222' : '#ccc')))))
+                                }};"></span>
+                    @endif
+                </h1>
                 <div class="profile-meta">
                     <span class="profile-meta-item">
                         <i class="bi bi-geo-alt-fill"></i> {{ $applicant->kota }}, {{ $applicant->provinsi }}

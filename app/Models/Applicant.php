@@ -36,6 +36,7 @@ class Applicant extends Model
         'pkl_tempat',
         'catatan',
         'status',
+        'color_code',
     ];
 
     protected $casts = [
