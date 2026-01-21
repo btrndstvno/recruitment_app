@@ -13,7 +13,6 @@
             <div class="profile-info">
                 <h1 class="profile-name d-flex align-items-center gap-2">
                     {{ $applicant->nama_lengkap }}
-                    @if($applicant->color_code)
                         <span title="Color Code" style="display:inline-block;width:22px;height:22px;border-radius:50%;border:2px solid #eee;
                             background:
                                 {{
@@ -23,8 +22,8 @@
                                     ($applicant->color_code == 'hijau' ? '#27ae60' :
                                     ($applicant->color_code == 'hitam' ? '#222222' :
                                     '#ccc'))))
-                                }};"></span>
-                    @endif
+                                }};">
+                        </span>
                 </h1>
                 <div class="profile-meta">
                     <span class="profile-meta-item">
