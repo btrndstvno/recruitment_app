@@ -23,12 +23,12 @@
                 <div class="col-md-4 mb-3">
                     <label for="color_code" class="form-label">Color Code</label>
                     <select class="form-select @error('color_code') is-invalid @enderror" id="color_code" name="color_code">
-                        <option value="">Abu-abu (default)</option>
+                        <option value="abu-abu" {{ old('color_code', 'abu-abu') == 'abu-abu' ? 'selected' : '' }}>Abu-abu (default)</option>
                         <option value="merah" style="color:#000;" {{ old('color_code') == 'merah' ? 'selected' : '' }}>🟥Merah</option>
                         <option value="kuning" style="color:#000;" {{ old('color_code') == 'kuning' ? 'selected' : '' }}>🟨Kuning</option>
                         <option value="biru" style="color:#000;" {{ old('color_code') == 'biru' ? 'selected' : '' }}>🟦Biru</option>
                         <option value="hijau" style="color:#000;" {{ old('color_code') == 'hijau' ? 'selected' : '' }}>🟩Hijau</option>
-                        <option value="hitam" style="color:#000;" {{ old('color_code') == 'hitam' ? 'selected' : '' }}>⬛hitam</option>
+                        <option value="hitam" style="color:#000;" {{ old('color_code') == 'hitam' ? 'selected' : '' }}>⬛Hitam</option>
                     </select>
                     @error('color_code')
                         <div class="invalid-feedback">{{ $message }}</div>

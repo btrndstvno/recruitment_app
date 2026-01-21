@@ -24,7 +24,7 @@
                 <div class="col-md-4 mb-3">
                     <label for="color_code" class="form-label">Color Code</label>
                     <select class="form-select @error('color_code') is-invalid @enderror" id="color_code" name="color_code">
-                        <option value="">Abu-abu (default)</option>
+                        <option value="abu-abu" {{ old('color_code', $applicant->color_code ?? 'abu-abu') == 'abu-abu' ? 'selected' : '' }}>Abu-abu (default)</option>
                         <option value="merah" style="color:#000;" {{ old('color_code', $applicant->color_code) == 'merah' ? 'selected' : '' }}>🟥Merah</option>
                         <option value="kuning" style="color:#000;" {{ old('color_code', $applicant->color_code) == 'kuning' ? 'selected' : '' }}>🟨Kuning</option>
                         <option value="biru" style="color:#000;" {{ old('color_code', $applicant->color_code) == 'biru' ? 'selected' : '' }}>🟦Biru</option>

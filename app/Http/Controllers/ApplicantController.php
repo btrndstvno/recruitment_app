@@ -130,7 +130,7 @@ class ApplicantController extends Controller
             'pkl_jurusan' => 'nullable|required_if:is_pkl,1|string|max:255',
             'pkl_tempat' => 'nullable|required_if:is_pkl,1|string|max:255',
             'catatan' => 'nullable|string',
-            'color_code' => 'nullable|in:merah,kuning,biru,hijau,hitam',
+            'color_code' => 'nullable|in:abu-abu,merah,kuning,biru,hijau,hitam',
         ],[
             'no_ktp.digits' => 'No. KTP harus terdiri dari 16 digit angka.',
         ]);
@@ -224,7 +224,7 @@ class ApplicantController extends Controller
             'pkl_tempat' => 'nullable|required_if:is_pkl,1|string|max:255',
             'catatan' => 'nullable|string',
             'status' => 'required|in:pending,tested,accepted,rejected',
-            'color_code' => 'nullable|in:merah,kuning,biru,hijau,hitam',
+            'color_code' => 'nullable|in:abu-abu,merah,kuning,biru,hijau,hitam',
         ], [
             'no_ktp.unique' => 'No. KTP ini sudah digunakan oleh pelamar lain.',
             'no_ktp.digits' => 'No. KTP harus terdiri dari 16 digit angka.',
