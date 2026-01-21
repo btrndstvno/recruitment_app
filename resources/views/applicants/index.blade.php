@@ -346,9 +346,21 @@ document.addEventListener('DOMContentLoaded', function() {
     if(searchInput) {
         searchInput.addEventListener('input', function() {
             clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => submitFilter(), 500);
+            debounceTimer = setTimeout(() => submitFilter(), 400);
+        });
+        searchInput.addEventListener('keydown', function(e) {
+            if(e.key === 'Enter') {
+                submitFilter();
+            }
         });
     }
+
+    // Trigger submitFilter jika halaman di-load dari cache (back/forward)
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            submitFilter();
+        }
+    });
 
     [tipeSelect, statusSelect, bulanSelect, tahunSelect, tanggalInput].forEach(el => {
         if(el) el.addEventListener('change', () => submitFilter());

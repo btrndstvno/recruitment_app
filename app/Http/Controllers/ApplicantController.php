@@ -237,9 +237,10 @@ class ApplicantController extends Controller
         $applicant->update($validated);
 
         // Preserve query parameters (page, filters) when redirecting
-        $queryParams = $request->only(['page', 'search', 'status', 'tipe', 'tanggal', 'bulan', 'tahun']);
+        $queryParams = $request->only(['page', 'search', 'tipe', 'tanggal', 'bulan', 'tahun']);
         
-        return redirect()->route('applicants.show', array_merge(['applicant' => $applicant], $queryParams))
+        return redirect()
+            ->route('applicants.show', array_merge(['applicant' => $applicant], $queryParams))
             ->with('success', 'Data pelamar berhasil diperbarui!');
     }
 

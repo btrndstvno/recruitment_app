@@ -65,10 +65,10 @@
             </div>
         </div>
         <div class="profile-actions">
-            <a href="{{ route('applicants.index') }}?{{ http_build_query(request()->query()) }}" class="btn btn-sm">
+            <a href="{{ route('applicants.index', request()->query()) }}" class="btn btn-sm">
                 <i class="bi bi-arrow-left"></i> Kembali
             </a>
-            <a href="{{ route('applicants.edit', $applicant) }}?{{ http_build_query(request()->query()) }}" class="btn btn-sm">
+            <a href="{{ route('applicants.edit', array_merge(['applicant' => $applicant->id], request()->query())) }}" class="btn btn-sm">
                 <i class="bi bi-pencil"></i> Edit
             </a>
         </div>

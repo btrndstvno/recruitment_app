@@ -12,7 +12,8 @@
 
 <div class="card">
     <div class="card-body">
-        <form action="{{ route('applicants.update', $applicant) }}" method="POST" id="applicantForm" data-loading="true">
+        {{-- Tempelkan query params (search, page, dll) ke URL action --}}
+        <form action="{{ route('applicants.update', array_merge(['applicant' => $applicant->id], request()->query())) }}" method="POST" id="applicantForm" data-loading="true">
             @csrf
             @method('PUT')
 
