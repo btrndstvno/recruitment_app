@@ -37,7 +37,7 @@ class ApplicantExportController extends Controller
                     'Tahun Lulus' => $a->tahun_lulus,
                     'IPK' => $a->ipk,
                     'Status' => $a->status,
-                    'Color Code' => $a->color_code ?? "",
+                    'Color Code' => $a->color_code,
                 ];
             })->toArray());
 

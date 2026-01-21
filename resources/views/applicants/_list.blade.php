@@ -67,18 +67,16 @@
                                 <div>
                                     <div class="applicant-name d-flex align-items-center gap-2">
                                         {{ $applicant->nama_lengkap }}
-                                        @if($applicant->color_code)
-                                            <span title="Color Code" style="display:inline-block;width:16px;height:16px;border-radius:50%;border:1.5px solid #eee;
-                                                background:
-                                                    {{
-                                                        $applicant->color_code == 'merah' ? '#e74c3c' :
-                                                        ($applicant->color_code == 'kuning' ? '#f1c40f' :
-                                                        ($applicant->color_code == 'biru' ? '#3498db' :
-                                                        ($applicant->color_code == 'hijau' ? '#27ae60' :
-                                                        ($applicant->color_code == 'ungu' ? '#8e44ad' :
-                                                        ($applicant->color_code == 'hitam' ? '#222' : '#ccc')))))
-                                                    }};"></span>
-                                        @endif
+                                        <span title="Color Code" style="display:inline-block;width:16px;height:16px;border-radius:50%;border:1.5px solid #eee;
+                                            background:
+                                                {{
+                                                    $applicant->color_code == 'merah' ? '#e74c3c' :
+                                                    ($applicant->color_code == 'kuning' ? '#f1c40f' :
+                                                    ($applicant->color_code == 'biru' ? '#3498db' :
+                                                    ($applicant->color_code == 'hijau' ? '#27ae60' :
+                                                    ($applicant->color_code == 'hitam' ? '#222222' :
+                                                    '#ccc'))))
+                                                }};"></span>
                                     </div>
                                     <div class="applicant-meta">
                                         <i class="bi bi-geo-alt me-1"></i>{{ $applicant->kota }}
@@ -155,7 +153,7 @@
                                                                     ($applicant->color_code == 'biru' ? '#3498db' :
                                                                     ($applicant->color_code == 'hijau' ? '#27ae60' :
                                                                     ($applicant->color_code == 'ungu' ? '#8e44ad' :
-                                                                    ($applicant->color_code == 'hitam' ? '#222' : '#ccc')))))
+                                                                    '#ccc'))))
                                                                 }};"></span>
                                                     @endif
                                                 </div>

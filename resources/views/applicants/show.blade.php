@@ -21,8 +21,8 @@
                                     ($applicant->color_code == 'kuning' ? '#f1c40f' :
                                     ($applicant->color_code == 'biru' ? '#3498db' :
                                     ($applicant->color_code == 'hijau' ? '#27ae60' :
-                                    ($applicant->color_code == 'ungu' ? '#8e44ad' :
-                                    ($applicant->color_code == 'hitam' ? '#222' : '#ccc')))))
+                                    ($applicant->color_code == 'hitam' ? '#222222' :
+                                    '#ccc'))))
                                 }};"></span>
                     @endif
                 </h1>
