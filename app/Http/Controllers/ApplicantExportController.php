@@ -11,7 +11,8 @@ class ApplicantExportController extends Controller
 {
     public function export(Request $request)
     {
-        $applicants = Applicant::all();
+        // Only export applicants that are not archived
+        $applicants = Applicant::whereNull('archived_at')->get();
 
         $filename = 'applicants_export_' . now()->format('Ymd_His') . '.xlsx';
         $path = storage_path('app/' . $filename);
