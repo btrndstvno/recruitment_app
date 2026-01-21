@@ -24,12 +24,12 @@
                     <label for="color_code" class="form-label">Color Code</label>
                     <select class="form-select @error('color_code') is-invalid @enderror" id="color_code" name="color_code">
                         <option value="">Pilih Warna</option>
-                        <option value="merah" style="color:#fff;" {{ old('color_code') == 'merah' ? 'selected' : '' }}>🟥Merah</option>
+                        <option value="merah" style="color:#000;" {{ old('color_code') == 'merah' ? 'selected' : '' }}>🟥Merah</option>
                         <option value="kuning" style="color:#000;" {{ old('color_code') == 'kuning' ? 'selected' : '' }}>🟨Kuning</option>
-                        <option value="biru" style="color:#fff;" {{ old('color_code') == 'biru' ? 'selected' : '' }}>🟦Biru</option>
-                        <option value="hijau" style="color:#fff;" {{ old('color_code') == 'hijau' ? 'selected' : '' }}>🟩Hijau</option>
-                        <option value="ungu" style="color:#fff;" {{ old('color_code') == 'ungu' ? 'selected' : '' }}>🟪Ungu</option>
-                        <option value="hitam" style="color:#fff;" {{ old('color_code') == 'hitam' ? 'selected' : '' }}>⬛Hitam</option>
+                        <option value="biru" style="color:#000;" {{ old('color_code') == 'biru' ? 'selected' : '' }}>🟦Biru</option>
+                        <option value="hijau" style="color:#000;" {{ old('color_code') == 'hijau' ? 'selected' : '' }}>🟩Hijau</option>
+                        <option value="ungu" style="color:#000;" {{ old('color_code') == 'ungu' ? 'selected' : '' }}>🟪Ungu</option>
+                        <option value="hitam" style="color:#000;" {{ old('color_code') == 'hitam' ? 'selected' : '' }}>⬛Hitam</option>
                     </select>
                     @error('color_code')
                         <div class="invalid-feedback">{{ $message }}</div>
