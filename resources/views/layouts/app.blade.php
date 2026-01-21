@@ -51,6 +51,14 @@
                         <span class="sidebar-menu-text">Import Excel</span>
                     </a>
                 </li>
+                <li class="sidebar-menu-item">
+                    <a href="#" id="sidebarExportExcel" class="sidebar-menu-link" title="Export Excel">
+                        <span class="sidebar-menu-icon">
+                            <i class="bi bi-file-earmark-arrow-down"></i>
+                        </span>
+                        <span class="sidebar-menu-text">Export Excel</span>
+                    </a>
+                </li>
             </ul>
         </nav>
 
@@ -349,5 +357,28 @@
     </script>
     
     @stack('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const exportSidebar = document.getElementById('sidebarExportExcel');
+            if (exportSidebar) {
+                exportSidebar.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Export Data Applicant?',
+                        text: 'File Excel akan didownload. Lanjutkan?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Download',
+                        cancelButtonText: 'Batal',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "{{ route('applicants.export') }}";
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>

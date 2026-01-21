@@ -39,7 +39,7 @@
         @else
             <a href="{{ route('applicants.create') }}" class="btn btn-primary">
                 <i class="bi bi-person-plus me-1"></i>Tambah Pelamar
-            </a>
+            </a> 
         @endif
     </div>
 </div>
