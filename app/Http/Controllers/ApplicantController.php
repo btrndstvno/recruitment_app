@@ -25,8 +25,8 @@ class ApplicantController extends Controller
         // Search filter dengan checklist field
         if ($request->filled('search')) {
             $search = $request->search;
-            $fields = (array) $request->input('search_fields', ['nama_lengkap','alamat','no_hp_1','no_ktp']);
-            $allowedFields = ['nama_lengkap', 'alamat', 'no_hp_1', 'no_ktp'];
+            $fields = (array) $request->input('search_fields', ['nama_lengkap','alamat','no_hp_1','no_ktp', 'applicant_number']);
+            $allowedFields = ['nama_lengkap', 'alamat', 'no_hp_1', 'no_ktp', 'applicant_number'];
             $fields = array_intersect($fields, $allowedFields);
             if (count($fields) > 0) {
                 $query->where(function ($q) use ($search, $fields) {

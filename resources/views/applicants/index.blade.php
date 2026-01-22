@@ -91,6 +91,10 @@
                                 <input class="form-check-input search-field-cb" type="checkbox" id="sf_alamat" name="search_fields[]" value="alamat" {{ $isAll || in_array('alamat', $sf ?? []) ? 'checked' : '' }}>
                                 <label class="form-check-label small" for="sf_alamat">Alamat</label>
                             </div>
+                            <div class="form-check form-check-inline m-0">
+                                <input class="form-check-input search-field-cb" type="checkbox" id="sf_id" name="search_fields[]" value="applicant_number" {{ $isAll || in_array('applicant_number', $sf ?? []) ? 'checked' : '' }}>
+                                <label class="form-check-label small" for="sf_id">ID Pelamar</label>
+                            </div>
                         </div>
                     </div>
 

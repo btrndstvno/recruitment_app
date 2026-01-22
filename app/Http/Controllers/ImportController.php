@@ -61,12 +61,17 @@ class ImportController extends Controller
     // --- MODUL 1: IMPORT APPLICANT ---
     private function processApplicants($path, $type)
     {
-        $rows = SimpleExcelReader::create($path, $type)->getRows();
+        // FIX: Disable snake_case to preserve "Applicant Number", "Status", "Color String" keys
+        $rows = SimpleExcelReader::create($path, $type)
+            ->headersToSnakeCase(false)
+            ->getRows();
+
         $count = 0;
 
         DB::beginTransaction();
         try {
             foreach ($rows as $row) {
+                // Ensure accessing with correct Case Sensitive keys
                 $appNum = $row['Applicant Number'] ?? null;
                 if (!$appNum) continue;
 
@@ -91,6 +96,37 @@ class ImportController extends Controller
 
                 $noKtp = $row['ISSN'] ?? $row['NIK'] ?? $row['No KTP'] ?? null;
 
+                // FIX Issue 4: Mapping status with correct casing
+                $statusRaw = strtolower(trim($row['Status'] ?? ''));
+                $statusMap = [
+                    'hired' => 'accepted',
+                    'accepted' => 'accepted',
+                    'reject' => 'rejected',
+                    'rejected' => 'rejected',
+                    'tested' => 'tested',
+                ];
+                $status = $statusMap[$statusRaw] ?? 'pending';
+
+                // FIX Issue 5: Mapping color code from "Color String" or "Color Code"
+                $colorRaw = strtolower(trim($row['Color String'] ?? $row['Color Code'] ?? ''));
+                $colorMap = [
+                    'red' => 'merah',
+                    'yellow' => 'kuning',
+                    'blue' => 'biru',
+                    'green' => 'hijau',
+                    'black' => 'hitam',
+                    'gray' => 'abu-abu',
+                    'grey' => 'abu-abu',
+                    // Indonesian names
+                    'merah' => 'merah',
+                    'kuning' => 'kuning',
+                    'biru' => 'biru',
+                    'hijau' => 'hijau',
+                    'hitam' => 'hitam',
+                    'abu-abu' => 'abu-abu',
+                ];
+                $colorCode = $colorMap[$colorRaw] ?? ($colorRaw ?: null);
+
                 Applicant::updateOrCreate(
                     ['applicant_number' => $appNum],
                     [
@@ -102,11 +138,12 @@ class ImportController extends Controller
                         'provinsi'     => $row['State'] ?? '-',
                         'no_hp_1'      => $row['Home Phone'] ?? '-',
                         'no_hp_2'      => $row['Work Phone'] ?? null,
-                        'color_code'   => isset($row['Color Code']) ? strtolower($row['Color Code']) : null,
+                        'color_code'   => $colorCode,
                         'gender'       => $gender,
-                        'status'       => 'pending',
-                        'tempat_lahir' => 'Jakarta',
-                        'tanggal_lahir'=> now()->subYears(20),
+                        'status'       => $status,
+                        // FIX Issue 6: TTL default to '-' if not in Excel (Removed Jakarta default)
+                        'tempat_lahir' => '-',
+                        'tanggal_lahir'=> null,
                         'umur'         => 0,
                         'nama_sekolah' => '-',
                         'jurusan'      => '-',
@@ -126,7 +163,10 @@ class ImportController extends Controller
     // --- MODUL 2: IMPORT PENDIDIKAN (DIPERBAIKI) ---
     private function processEducation($path, $type)
     {
-        $rows = SimpleExcelReader::create($path, $type)->getRows();
+        // Fix education header case too
+        $rows = SimpleExcelReader::create($path, $type)
+            ->headersToSnakeCase(false)
+            ->getRows();
         $candidates = [];
 
         foreach ($rows as $row) {
@@ -174,11 +214,21 @@ class ImportController extends Controller
         return back()->with('success', "Berhasil update pendidikan untuk $count Pelamar!");
     }
 
-// --- MODUL 3: IMPORT PSIKOTEST (FINAL VERSION) ---
+    // --- MODUL 3: IMPORT PSIKOTEST (MULTI-SHEET SUPPORT) ---
     private function processPsikotest($path, $type)
     {
-       $rows = \Spatie\SimpleExcel\SimpleExcelReader::create($path, $type)->getRows();
-        
+        // FIX Issue 8: Use OpenSpout directly to support Multiple Sheets
+        $reader = null;
+        if (str_ends_with(strtolower($path), '.xlsx')) {
+            $reader = new \OpenSpout\Reader\XLSX\Reader();
+        } elseif (str_ends_with(strtolower($path), '.csv')) {
+            $reader = new \OpenSpout\Reader\CSV\Reader();
+        } else {
+            return back()->with('error', 'Format file harus XLSX atau CSV');
+        }
+
+        $reader->open($path);
+
         // 1. SIAPKAN DATA PELAMAR (Mapping ID)
         $applicantMap = Applicant::whereNotNull('applicant_number')
                         ->pluck('id', 'applicant_number')
@@ -186,84 +236,133 @@ class ImportController extends Controller
 
         $count = 0;
         $failedCount = 0;
+        $sheetCount = 0;
 
-        foreach ($rows as $row) {
-            // --- STEP A: CARI PELAMAR (LOGIKA JODOH) ---
-            $rawNum = $row['HRI_Applicant_Number_STR'] ?? '';
-            
-            // Bersihkan angka (misal "1003.0000" jadi "1003")
-            $cleanNum = (string) intval(floatval($rawNum));
+        foreach ($reader->getSheetIterator() as $sheet) {
+            $sheetCount++;
+            $headers = [];
+            $isFirstRow = true;
 
-            // Coba cari dengan berbagai variasi
-            $applicantId = $applicantMap[$cleanNum] ?? null; // Cari "1003"
-            
-            if (!$applicantId) {
-                $applicantId = $applicantMap[$rawNum] ?? null; // Cari mentah "1003.0000"
+            foreach ($sheet->getRowIterator() as $rowObj) {
+                // Konversi row object ke array
+                $cells = $rowObj->getCells();
+                $rowData = [];
+                foreach ($cells as $cell) {
+                    $rowData[] = $cell->getValue();
+                }
+
+                // Ambil Header
+                if ($isFirstRow) {
+                    $headers = $rowData;
+                    $isFirstRow = false;
+                    continue;
+                }
+
+                // Map Row Data dengan Header
+                $row = [];
+                foreach ($headers as $index => $header) {
+                    $row[$header] = $rowData[$index] ?? null;
+                }
+
+                // SKIP jika kosong
+                if (empty($row['HRI_Applicant_Number_STR']) && empty($row['IQ'])) continue;
+
+                // --- PROSES DATA PER ROW ---
+                
+                // --- STEP A: CARI PELAMAR ---
+                $rawNum = $row['HRI_Applicant_Number_STR'] ?? '';
+                $cleanNum = (string) intval(floatval($rawNum));
+
+                $applicantId = $applicantMap[$cleanNum] ?? null; 
+                if (!$applicantId) $applicantId = $applicantMap[$rawNum] ?? null;
+                if (!$applicantId) {
+                     $appWithPrefix = 'APP' . str_pad($cleanNum, 5, '0', STR_PAD_LEFT); 
+                     $applicantId = $applicantMap[$appWithPrefix] ?? null;
+                }
+
+                if (!$applicantId) {
+                    if ($failedCount < 5) Log::warning("GAGAL MATCH: Excel ID=$rawNum");
+                    $failedCount++;
+                    continue; 
+                }
+
+                // --- STEP B: SIAPKAN DATA DASAR ---
+                $isType38 = isset($row['HR_AspekPsikologis38_RG_38']) || isset($row['HR_AspekPsikologis38_RG_1']);
+                $prefix = $isType38 ? 'HR_AspekPsikologis38_RG_' : 'HR_AspekPsikologis34_RG_';
+
+                $tanggalTest = now();
+                if (!empty($row['tanggal'])) {
+                    try {
+                        if ($row['tanggal'] instanceof \DateTime) {
+                             $tanggalTest = \Carbon\Carbon::instance($row['tanggal']);
+                        } else {
+                             $tanggalTest = \Carbon\Carbon::parse($row['tanggal']);
+                        }
+                    } catch (\Exception $e) {}
+                }
+
+                $data = [
+                    'applicant_id' => $applicantId,
+                    'report_type'  => $isType38 ? '38' : '34',
+                    'tanggal_test' => $tanggalTest,
+                    'kesimpulan_saran' => $row['Kesimpulan'] ?? null,
+                ];
+
+                $getValue = function($key) use ($row) {
+                    $val = $row[$key] ?? null;
+                    if ($val === null || $val === '' || $val === 0 || $val === '0') return null;
+                    return floatval($val);
+                };
+
+                // Aspek A
+                foreach (\App\Models\PsikotestReport::getAspekAFields() as $field => $label) {
+                    $idx = array_search($field, array_keys(\App\Models\PsikotestReport::getAspekAFields()));
+                    $data[$field] = $getValue($prefix . ($idx + 1));
+                }
+                
+                // Aspek B
+                $fieldsB = $isType38 ? \App\Models\PsikotestReport::getAspekBFields38() : \App\Models\PsikotestReport::getAspekBFields();
+                $startB = 7 + 1; 
+                foreach (array_keys($fieldsB) as $i => $field) {
+                    $data[$field] = $getValue($prefix . ($startB + $i));
+                }
+
+                // Aspek C
+                $fieldsC = $isType38 ? \App\Models\PsikotestReport::getAspekCFields38() : \App\Models\PsikotestReport::getAspekCFields();
+                $startC = $startB + count($fieldsB);
+                foreach (array_keys($fieldsC) as $i => $field) {
+                    $data[$field] = $getValue($prefix . ($startC + $i));
+                }
+
+                // IQ Check
+                $iqColumns = ['HR_Borderline', 'HR_Dibawah_Rata', 'HR_RataRata', 'HR_Diatas_Rata', 'HR_Superior', 'HR_VerySuperior', 'IQ'];
+                $iqScore = 0;
+                foreach ($iqColumns as $col) {
+                    $val = floatval($row[$col] ?? 0);
+                    if ($val > 0) { $iqScore = $val; break; }
+                }
+
+                $data['iq_score'] = $iqScore;
+                $data['iq_category'] = match (true) {
+                    $iqScore >= 140 => 'very_superior',
+                    $iqScore >= 120 => 'superior',
+                    $iqScore >= 110 => 'diatas_rata_rata',
+                    $iqScore >= 90  => 'rata_rata',
+                    $iqScore >= 80  => 'dibawah_rata_rata',
+                    default         => 'borderline',
+                };
+
+                // SAVE
+                $data = \App\Models\PsikotestReport::calculateScores($data, $data['report_type']);
+                PsikotestReport::updateOrCreate(['applicant_id' => $applicantId], $data);
+                Applicant::where('id', $applicantId)->update(['tanggal_test' => $tanggalTest]);
+                $count++;
             }
-
-            if (!$applicantId) {
-                 // Cari dengan prefix "APP01003" (Sesuaikan padding 0 dengan seeder kamu)
-                 $appWithPrefix = 'APP' . str_pad($cleanNum, 5, '0', STR_PAD_LEFT); 
-                 $applicantId = $applicantMap[$appWithPrefix] ?? null;
-            }
-
-            if (!$applicantId) {
-                if ($failedCount < 5) Log::warning("GAGAL MATCH: Excel ID=$rawNum");
-                $failedCount++;
-                continue; 
-            }
-
-            // --- STEP B: SIAPKAN DATA DASAR ---
-            $isType38 = isset($row['HR_AspekPsikologis38_RG_38']);
-            $prefix = $isType38 ? 'HR_AspekPsikologis38_RG_' : 'HR_AspekPsikologis34_RG_';
-
-            $data = [
-                'applicant_id' => $applicantId,
-                'report_type'  => $isType38 ? '38' : '34',
-                'tanggal_test' => isset($row['tanggal']) ? \Carbon\Carbon::parse($row['tanggal']) : now(),
-                'kesimpulan_saran' => $row['Kesimpulan'] ?? null,
-            ];
-
-            // Ambil nilai aspek dari Excel, masukkan ke $data sesuai field PsikotestReport
-            foreach (\App\Models\PsikotestReport::getAspekAFields() as $field => $label) {
-                $idx = array_search($field, array_keys(\App\Models\PsikotestReport::getAspekAFields()));
-                $data[$field] = floatval($row[$prefix . ($idx + 1)] ?? 0);
-            }
-            $fieldsB = $isType38 ? \App\Models\PsikotestReport::getAspekBFields38() : \App\Models\PsikotestReport::getAspekBFields();
-            $startB = 7 + 1;
-            foreach (array_keys($fieldsB) as $i => $field) {
-                $data[$field] = floatval($row[$prefix . ($startB + $i)] ?? 0);
-            }
-            $fieldsC = $isType38 ? \App\Models\PsikotestReport::getAspekCFields38() : \App\Models\PsikotestReport::getAspekCFields();
-            $startC = $startB + count($fieldsB);
-            foreach (array_keys($fieldsC) as $i => $field) {
-                $data[$field] = floatval($row[$prefix . ($startC + $i)] ?? 0);
-            }
-
-            // IQ & kategori
-            $iqScore = floatval($row['IQ'] ?? 0);
-            $data['iq_score'] = $iqScore;
-            $data['iq_category'] = match (true) {
-                $iqScore >= 140 => 'very_superior',
-                $iqScore >= 120 => 'superior',
-                $iqScore >= 110 => 'diatas_rata_rata',
-                $iqScore >= 90  => 'rata_rata',
-                $iqScore >= 80  => 'dibawah_rata_rata',
-                default         => 'borderline',
-            };
-
-            // --- STEP C: HITUNG SKOR DENGAN SATU SUMBER (MODEL/CONTROLLER) ---
-            $data = \App\Models\PsikotestReport::calculateScores($data, $data['report_type']);
-
-            // Simpan ke Database
-            PsikotestReport::updateOrCreate(
-                ['applicant_id' => $applicantId],
-                $data
-            );
-            $count++;
         }
         
-        $msg = "Selesai! Berhasil import $count data. Gagal mencocokkan $failedCount data.";
+        $reader->close();
+        
+        $msg = "Selesai! Berhasil import $count data dari $sheetCount sheets. Gagal mencocokkan $failedCount data.";
         return back()->with('success', $msg);
     }
 }

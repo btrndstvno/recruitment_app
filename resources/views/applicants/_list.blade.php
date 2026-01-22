@@ -66,8 +66,7 @@
                                 </div>
                                 <div>
                                     <div class="applicant-name d-flex align-items-center gap-2">
-                                        {{ $applicant->nama_lengkap }}
-                                        <span title="Color Code" style="display:inline-block;width:16px;height:16px;border-radius:50%;border:1.5px solid #eee;
+                                        <span title="Color Code" class="flex-shrink-0" style="display:inline-block;width:16px;height:16px;border-radius:50%;border:1.5px solid #eee;
                                             background:
                                                 {{
                                                     $applicant->color_code == 'merah' ? '#e74c3c' :
@@ -75,8 +74,9 @@
                                                     ($applicant->color_code == 'biru' ? '#3498db' :
                                                     ($applicant->color_code == 'hijau' ? '#27ae60' :
                                                     ($applicant->color_code == 'hitam' ? '#222222' :
-                                                    '#7f8c8d'))))
+                                                    ($applicant->color_code == 'abu-abu' ? '#95a5a6' : 'transparent')))))
                                                 }};"></span>
+                                        <span class="text-truncate">{{ $applicant->nama_lengkap }}</span>
                                     </div>
                                     <div class="applicant-meta">
                                         <i class="bi bi-geo-alt me-1"></i>{{ $applicant->kota }}
@@ -142,21 +142,21 @@
                     </div>
                     <a href="{{ route('applicants.show', $applicant) }}?{{ http_build_query(request()->query()) }}" class="applicant-card-content">
                         <div class="applicant-card-name">{{ $applicant->nama_lengkap }}</div>
-                                                <div class="applicant-card-name d-flex align-items-center gap-2">
-                                                    {{ $applicant->nama_lengkap }}
-                                                    @if($applicant->color_code)
-                                                        <span title="Warna Penanda" style="display:inline-block;width:14px;height:14px;border-radius:50%;border:1.5px solid #eee;
-                                                            background:
-                                                                {{
-                                                                    $applicant->color_code == 'merah' ? '#e74c3c' :
-                                                                    ($applicant->color_code == 'kuning' ? '#f1c40f' :
-                                                                    ($applicant->color_code == 'biru' ? '#3498db' :
-                                                                    ($applicant->color_code == 'hijau' ? '#27ae60' :
-                                                                    ($applicant->color_code == 'hitam' ? '#222222' :
-                                                                    '#7f8c8d' ))))
-                                                                }};"></span>
-                                                    @endif
-                                                </div>
+                        <div class="applicant-card-name d-flex align-items-center gap-2">
+                            @if($applicant->color_code)
+                                <span title="Warna Penanda" class="flex-shrink-0" style="display:inline-block;width:14px;height:14px;border-radius:50%;border:1.5px solid #eee;
+                                    background:
+                                        {{
+                                            $applicant->color_code == 'merah' ? '#e74c3c' :
+                                            ($applicant->color_code == 'kuning' ? '#f1c40f' :
+                                            ($applicant->color_code == 'biru' ? '#3498db' :
+                                            ($applicant->color_code == 'hijau' ? '#27ae60' :
+                                            ($applicant->color_code == 'hitam' ? '#222222' :
+                                            ($applicant->color_code == 'abu-abu' ? '#95a5a6' : 'transparent') ))))
+                                        }};"></span>
+                            @endif
+                            <span class="text-truncate">{{ $applicant->nama_lengkap }}</span>
+                        </div>
                         <div class="applicant-card-meta">
                             <span><i class="bi bi-geo-alt"></i> {{ $applicant->kota }}</span>
                             <span><i class="bi bi-calendar3"></i> {{ $applicant->tanggal_test ? \Carbon\Carbon::parse($applicant->tanggal_test)->format('d M Y') : '-' }}</span>

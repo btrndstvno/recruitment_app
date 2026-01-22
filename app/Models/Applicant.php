@@ -65,7 +65,16 @@ class Applicant extends Model
      */
     public function getTtlAttribute()
     {
-        return $this->tempat_lahir . ', ' . $this->tanggal_lahir->format('d F Y');
+        if (!$this->tempat_lahir && !$this->tanggal_lahir) {
+            return '-';
+        }
+        $tempat = $this->tempat_lahir && $this->tempat_lahir !== '-' ? $this->tempat_lahir : '';
+        $tanggal = $this->tanggal_lahir ? $this->tanggal_lahir->format('d F Y') : '';
+        
+        if ($tempat && $tanggal) return $tempat . ', ' . $tanggal;
+        if ($tempat) return $tempat;
+        if ($tanggal) return $tanggal;
+        return '-';
     }
 
     /**
