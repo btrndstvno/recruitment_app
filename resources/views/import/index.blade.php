@@ -18,7 +18,7 @@
             </a>
         </div>
 
-        {{-- Info Card --}}
+        <!-- {{-- Info Card --}}
         <div class="card border-info mb-4">
             <div class="card-body">
                 <h5 class="card-title text-info">
@@ -97,7 +97,7 @@
                     <i class="bi bi-download me-1"></i>Download Template CSV
                 </a>
             </div>
-        </div>
+        </div> -->
 
         {{-- Upload Form --}}
         <div class="card">

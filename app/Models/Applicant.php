@@ -10,6 +10,7 @@ class Applicant extends Model
     use HasFactory;
 
     protected $fillable = [
+        'applicant_number',
         'nama_lengkap',
         'alamat',
         'kota',
@@ -55,7 +56,7 @@ class Applicant extends Model
      */
     public function psikotestReport()
     {
-        return $this->hasOne(PsikotestReport::class);
+        return $this->hasOne(PsikotestReport::class, 'applicant_id');
     }
 
 

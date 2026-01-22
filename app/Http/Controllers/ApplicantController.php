@@ -80,7 +80,7 @@ class ApplicantController extends Controller
             $query->orderBy('nama_lengkap', 'asc');
         }
 
-        $applicants = $query->paginate(10)->appends($request->query());
+        $applicants = $query->paginate(100)->appends($request->query());
         
         if ($request->ajax()) {
             return view('applicants._list', compact('applicants'))->render();

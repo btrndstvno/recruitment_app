@@ -61,6 +61,10 @@
                                 @break
                         @endswitch
                     </span>
+                    <span class="profile-badge">
+                        <i class="bi bi-card-heading"></i> ID: {{ $applicant->applicant_number }}
+
+                    </span>
                 </div>
             </div>
         </div>

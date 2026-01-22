@@ -15,7 +15,9 @@ class PsikotestReport extends Model
         'tanggal_test',
         'iq_score',
         'iq_category',
-        // A. Kemampuan Intelektual Umum
+        'result',
+        'kesimpulan_saran',
+        // Tambahkan semua kolom lain yang diisi secara massal jika perlu
         'kemampuan_memecahkan_masalah',
         'ruang_lingkup_pengetahuan',
         'kemampuan_berfikir_analitis',
@@ -24,7 +26,6 @@ class PsikotestReport extends Model
         'kemampuan_berfikir_abstrak',
         'kemampuan_mengingat',
         'xa_score',
-        // B. Kemampuan Khusus
         'kecepatan_dalam_bekerja',
         'ketelitian_dalam_bekerja',
         'kestabilan_dalam_bekerja',
@@ -33,19 +34,16 @@ class PsikotestReport extends Model
         'kemampuan_berhitung',
         'kemampuan_mengemukakan_pendapat',
         'kemampuan_penalaran_non_verbal',
-        // Extra fields for 38-question version
         'persepsi_ruang_bidang',
         'kemampuan_dasar_mekanik',
         'kemampuan_mengidentifikasi_komponen',
         'kemampuan_bekerja_dengan_angka_computational',
         'kemampuan_penalaran_mekanik',
-        'kemampuan_merakit_objek',
-        // Continue B
         'kemampuan_membaca_memahami_logis',
         'kemampuan_administrasi_kompleks',
+        'kemampuan_merakit_objek',
         'sistematika_dalam_bekerja',
         'xb_score',
-        // C. Kepribadian Dan Sikap Kerja
         'motivasi',
         'kemampuan_membuat_keputusan',
         'kemampuan_kerja_sama_kelompok',
@@ -64,8 +62,101 @@ class PsikotestReport extends Model
         'kejujuran_dalam_bekerja',
         'xc_score',
         'xt_score',
-        'kesimpulan_saran',
     ];
+
+    /**
+     * Calculate average scores for each section (static, reusable).
+     */
+    public static function calculateScores(array $data, string $reportType = '34')
+    {
+        // Calculate XA Score (Aspek A) - same for both types
+        $aspekA = [
+            $data['kemampuan_memecahkan_masalah'] ?? null,
+            $data['ruang_lingkup_pengetahuan'] ?? null,
+            $data['kemampuan_berfikir_analitis'] ?? null,
+            $data['kemampuan_bekerja_dengan_angka'] ?? null,
+            $data['kemampuan_berfikir_logis'] ?? null,
+            $data['kemampuan_berfikir_abstrak'] ?? null,
+            $data['kemampuan_mengingat'] ?? null,
+        ];
+        $data['xa_score'] = self::calculateAverage($aspekA);
+
+        // Calculate XB Score (Aspek B) - different based on report type
+        if ($reportType === '34') {
+            $aspekB = [
+                $data['kecepatan_dalam_bekerja'] ?? null,
+                $data['ketelitian_dalam_bekerja'] ?? null,
+                $data['kestabilan_dalam_bekerja'] ?? null,
+                $data['ketahanan_kerja'] ?? null,
+                $data['kemampuan_konsentrasi_persepsi'] ?? null,
+                $data['kemampuan_berhitung'] ?? null,
+                $data['kemampuan_mengemukakan_pendapat'] ?? null,
+                $data['kemampuan_penalaran_non_verbal'] ?? null,
+                $data['kemampuan_membaca_memahami_logis'] ?? null,
+                $data['kemampuan_administrasi_kompleks'] ?? null,
+                $data['sistematika_dalam_bekerja'] ?? null,
+            ];
+        } else {
+            $aspekB = [
+                $data['kecepatan_dalam_bekerja'] ?? null,
+                $data['ketelitian_dalam_bekerja'] ?? null,
+                $data['kestabilan_dalam_bekerja'] ?? null,
+                $data['ketahanan_kerja'] ?? null,
+                $data['kemampuan_konsentrasi_persepsi'] ?? null,
+                $data['kemampuan_mengemukakan_pendapat'] ?? null,
+                $data['kemampuan_penalaran_non_verbal'] ?? null,
+                $data['persepsi_ruang_bidang'] ?? null,
+                $data['kemampuan_dasar_mekanik'] ?? null,
+                $data['kemampuan_mengidentifikasi_komponen'] ?? null,
+                $data['kemampuan_bekerja_dengan_angka_computational'] ?? null,
+                $data['kemampuan_penalaran_mekanik'] ?? null,
+                $data['kemampuan_membaca_memahami_logis'] ?? null,
+                $data['kemampuan_merakit_objek'] ?? null,
+                $data['sistematika_dalam_bekerja'] ?? null,
+            ];
+        }
+        $data['xb_score'] = self::calculateAverage($aspekB);
+
+        // Calculate XC Score (Aspek C) - same fields for both types
+        $aspekC = [
+            $data['motivasi'] ?? null,
+            $data['kemampuan_membuat_keputusan'] ?? null,
+            $data['kemampuan_kerja_sama_kelompok'] ?? null,
+            $data['kemampuan_menjadi_pemimpin'] ?? null,
+            $data['kemampuan_berfikir_positif'] ?? null,
+            $data['ketekunan_dalam_bekerja'] ?? null,
+            $data['kejujuran_berpendapat'] ?? null,
+            $data['tanggung_jawab_dalam_bekerja'] ?? null,
+            $data['motif_dalam_berprestasi'] ?? null,
+            $data['afiliasi'] ?? null,
+            $data['motif_menolong_orang_lain'] ?? null,
+            $data['kestabilan_emosi'] ?? null,
+            $data['kematangan_sosial'] ?? null,
+            $data['rasa_percaya_diri'] ?? null,
+            $data['penyesuaian_diri'] ?? null,
+            $data['kejujuran_dalam_bekerja'] ?? null,
+        ];
+        $data['xc_score'] = self::calculateAverage($aspekC);
+
+        // Calculate XT Score (Total)
+        $allScores = array_merge($aspekA, $aspekB, $aspekC);
+        $data['xt_score'] = self::calculateAverage($allScores);
+
+        return $data;
+    }
+
+    /**
+     * Calculate average of non-null values (static, reusable).
+     */
+    public static function calculateAverage(array $values)
+    {
+        // Filter out null, empty string, and 0 values (only count valid 1-5 scores)
+        $filtered = array_filter($values, fn($v) => $v !== null && $v !== '' && $v > 0);
+        if (count($filtered) === 0) {
+            return null;
+        }
+        return round(array_sum($filtered) / count($filtered), 2);
+    }
 
     protected $casts = [
         'tanggal_test' => 'date',
@@ -75,17 +166,11 @@ class PsikotestReport extends Model
         'xt_score' => 'decimal:2',
     ];
 
-    /**
-     * Get the applicant that owns this report.
-     */
     public function applicant()
     {
         return $this->belongsTo(Applicant::class);
     }
 
-    /**
-     * IQ Category label
-     */
     public function getIqCategoryLabelAttribute()
     {
         $labels = [
@@ -100,9 +185,8 @@ class PsikotestReport extends Model
         return $labels[$this->iq_category] ?? '-';
     }
 
-    /**
-     * Aspek A
-     */
+    // --- HELPER UNTUK IMPORT (Digunakan di Controller) ---
+
     public static function getAspekAFields()
     {
         return [
@@ -116,9 +200,7 @@ class PsikotestReport extends Model
         ];
     }
 
-    /**
-     * Aspek B untuk 34 pertanyaan
-     */
+    // Mapping Soal Tipe 34 (Total 11 Soal Aspek B)
     public static function getAspekBFields()
     {
         return [
@@ -136,9 +218,7 @@ class PsikotestReport extends Model
         ];
     }
 
-    /**
-     * aspek B untuk 38 pertanyaan
-     */
+    // Mapping Soal Tipe 38 (Total 15 Soal Aspek B)
     public static function getAspekBFields38()
     {
         return [
@@ -160,9 +240,7 @@ class PsikotestReport extends Model
         ];
     }
 
-    /**
-     * Aspek C untuk 34 pertanyaan
-     */
+    // Mapping Soal Tipe 34 (Total 16 Soal Aspek C)
     public static function getAspekCFields()
     {
         return [
@@ -185,13 +263,10 @@ class PsikotestReport extends Model
         ];
     }
 
-    /**
-     * Aspek C untuk 38 Pertanyaan
-     */
+    // Mapping Soal Tipe 38 (Total 16 Soal Aspek C)
     public static function getAspekCFields38()
     {
         return [
-
             'motivasi' => '23. Motivasi',
             'kemampuan_membuat_keputusan' => '24. Kemampuan Membuat Keputusan',
             'kemampuan_kerja_sama_kelompok' => '25. Kemampuan Kerja Sama Dalam Kelompok',
