@@ -91,25 +91,6 @@ class ImportController extends Controller
 
                 $noKtp = $row['ISSN'] ?? $row['NIK'] ?? $row['No KTP'] ?? null;
 
-                // Color code mapping dari kolom Color String/Color Code
-                $colorRaw = $row['Color Code'] ?? $row['Color String'] ?? null;
-                $colorCode = null;
-                if ($colorRaw) {
-                    $color = strtolower(trim($colorRaw));
-                    $colorCode = match($color) {
-                        'merah','red' => 'merah',
-                        'kuning','yellow' => 'kuning',
-                        'biru','blue' => 'biru',
-                        'hijau','green' => 'hijau',
-                        'hitam','black' => 'hitam',
-                        default => null
-                    };
-                }
-
-                // Status: jangan ubah jika sudah hired
-                $existing = Applicant::where('applicant_number', $appNum)->first();
-                $status = $existing && $existing->status === 'hired' ? 'hired' : 'pending';
-
                 Applicant::updateOrCreate(
                     ['applicant_number' => $appNum],
                     [
@@ -121,9 +102,9 @@ class ImportController extends Controller
                         'provinsi'     => $row['State'] ?? '-',
                         'no_hp_1'      => $row['Home Phone'] ?? '-',
                         'no_hp_2'      => $row['Work Phone'] ?? null,
-                        'color_code'   => $colorCode,
+                        'color_code'   => isset($row['Color Code']) ? strtolower($row['Color Code']) : null,
                         'gender'       => $gender,
-                        'status'       => $status,
+                        'status'       => 'pending',
                         'tempat_lahir' => 'Jakarta',
                         'tanggal_lahir'=> now()->subYears(20),
                         'umur'         => 0,
@@ -199,17 +180,9 @@ class ImportController extends Controller
        $rows = \Spatie\SimpleExcel\SimpleExcelReader::create($path, $type)->getRows();
         
         // 1. SIAPKAN DATA PELAMAR (Mapping ID)
-        // Mapping: applicant_number (Excel) -> id (DB)
         $applicantMap = Applicant::whereNotNull('applicant_number')
-            ->get()
-            ->mapWithKeys(function($a) {
-                // Map semua kemungkinan format
-                $map = [];
-                $map[(string) $a->applicant_number] = $a->id;
-                $map[(string) intval($a->applicant_number)] = $a->id;
-                $map['APP' . str_pad(intval($a->applicant_number), 5, '0', STR_PAD_LEFT)] = $a->id;
-                return $map;
-            })->toArray();
+                        ->pluck('id', 'applicant_number')
+                        ->toArray();
 
         $count = 0;
         $failedCount = 0;
@@ -240,79 +213,52 @@ class ImportController extends Controller
                 continue; 
             }
 
-            // --- STEP B: PROSES SKOR & HITUNG OTOMATIS ---
-            
+            // --- STEP B: SIAPKAN DATA DASAR ---
             $isType38 = isset($row['HR_AspekPsikologis38_RG_38']);
             $prefix = $isType38 ? 'HR_AspekPsikologis38_RG_' : 'HR_AspekPsikologis34_RG_';
-            
-            // Variabel Penampung Total (Direset jadi 0 setiap baris)
-            $scoreA = 0; 
-            $scoreB = 0; 
-            $scoreC = 0;
-            
+
             $data = [
                 'applicant_id' => $applicantId,
                 'report_type'  => $isType38 ? '38' : '34',
-                // Ambil tanggal dari Excel atau pakai hari ini
                 'tanggal_test' => isset($row['tanggal']) ? \Carbon\Carbon::parse($row['tanggal']) : now(),
-                'kesimpulan_saran' => $row['Kesimpulan'] ?? null, 
+                'kesimpulan_saran' => $row['Kesimpulan'] ?? null,
             ];
 
-            // 1. Hitung Aspek A (Intelektual)
-            foreach (array_keys(PsikotestReport::getAspekAFields()) as $i => $field) {
-                $val = floatval($row[$prefix . ($i + 1)] ?? 0);
-                $data[$field] = ($val > 0) ? $val : null; // Skor 0 jadi null (N/A)
-                $scoreA += ($val > 0) ? $val : 0;
+            // Ambil nilai aspek dari Excel, masukkan ke $data sesuai field PsikotestReport
+            foreach (\App\Models\PsikotestReport::getAspekAFields() as $field => $label) {
+                $idx = array_search($field, array_keys(\App\Models\PsikotestReport::getAspekAFields()));
+                $data[$field] = floatval($row[$prefix . ($idx + 1)] ?? 0);
             }
-
-            // 2. Hitung Aspek B (Sikap Kerja)
-            $fieldsB = $isType38 ? array_keys(PsikotestReport::getAspekBFields38()) : array_keys(PsikotestReport::getAspekBFields());
-            $startB = 7 + 1; // Aspek A ada 7 soal
-            foreach ($fieldsB as $i => $field) {
-                $val = floatval($row[$prefix . ($startB + $i)] ?? 0);
-                $data[$field] = ($val > 0) ? $val : null;
-                $scoreB += ($val > 0) ? $val : 0;
+            $fieldsB = $isType38 ? \App\Models\PsikotestReport::getAspekBFields38() : \App\Models\PsikotestReport::getAspekBFields();
+            $startB = 7 + 1;
+            foreach (array_keys($fieldsB) as $i => $field) {
+                $data[$field] = floatval($row[$prefix . ($startB + $i)] ?? 0);
             }
-
-            // 3. Hitung Aspek C (Kepribadian)
-            $fieldsC = $isType38 ? array_keys(PsikotestReport::getAspekCFields38()) : array_keys(PsikotestReport::getAspekCFields());
+            $fieldsC = $isType38 ? \App\Models\PsikotestReport::getAspekCFields38() : \App\Models\PsikotestReport::getAspekCFields();
             $startC = $startB + count($fieldsB);
-            foreach ($fieldsC as $i => $field) {
-                $val = floatval($row[$prefix . ($startC + $i)] ?? 0);
-                $data[$field] = ($val > 0) ? $val : null;
-                $scoreC += ($val > 0) ? $val : 0;
+            foreach (array_keys($fieldsC) as $i => $field) {
+                $data[$field] = floatval($row[$prefix . ($startC + $i)] ?? 0);
             }
 
-            // --- STEP C: SIMPAN HASIL HITUNGAN (AUTO-CALCULATION) ---
-            // Kita TIDAK mengambil dari Excel, tapi memasukkan hasil penjumlahan di atas
-            $data['xa_score'] = ($scoreA > 0) ? $scoreA : null;
-            $data['xb_score'] = ($scoreB > 0) ? $scoreB : null;
-            $data['xc_score'] = ($scoreC > 0) ? $scoreC : null;
-            $data['xt_score'] = ($scoreA + $scoreB + $scoreC > 0) ? ($scoreA + $scoreB + $scoreC) : null;
-
-            // --- STEP D: IQ & AUTO CATEGORY ---
-            // Ambil angka dari kolom 'IQ' di Excel
-            $iqScore = floatval($row['IQ'] ?? null);
-            $data['iq_score'] = ($iqScore > 0) ? $iqScore : null;
-            $data['iq_category'] = ($iqScore > 0) ? (match (true) {
+            // IQ & kategori
+            $iqScore = floatval($row['IQ'] ?? 0);
+            $data['iq_score'] = $iqScore;
+            $data['iq_category'] = match (true) {
                 $iqScore >= 140 => 'very_superior',
                 $iqScore >= 120 => 'superior',
                 $iqScore >= 110 => 'diatas_rata_rata',
                 $iqScore >= 90  => 'rata_rata',
                 $iqScore >= 80  => 'dibawah_rata_rata',
                 default         => 'borderline',
-            }) : null;
-            // Update status applicant hanya jika status bukan 'hired'
-            $applicant = Applicant::find($applicantId);
-            if ($applicant && $applicant->status !== 'hired') {
-                $applicant->status = 'tested';
-                $applicant->save();
-            }
+            };
+
+            // --- STEP C: HITUNG SKOR DENGAN SATU SUMBER (MODEL/CONTROLLER) ---
+            $data = \App\Models\PsikotestReport::calculateScores($data, $data['report_type']);
 
             // Simpan ke Database
             PsikotestReport::updateOrCreate(
-                ['applicant_id' => $applicantId], // Cari berdasarkan ID Pelamar
-                $data // Update data baru
+                ['applicant_id' => $applicantId],
+                $data
             );
             $count++;
         }
