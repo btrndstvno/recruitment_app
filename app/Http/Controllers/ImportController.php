@@ -94,7 +94,7 @@ class ImportController extends Controller
                     try { $applyDate = Carbon::parse($row['apply_date']); } catch (\Exception $e) {}
                 }
 
-                $noKtp = $row['issn'] ?? $row['nik'] ?? $row['no_ktp'] ?? null;
+                $noKtp = $row['no_ktp'] ?? '-';
                 
                 $statusRaw = strtolower(trim($row['status'] ?? ''));
                 $status = ($statusRaw == 'hired' || $statusRaw == 'accepted') ? 'accepted' : 
@@ -308,7 +308,16 @@ class ImportController extends Controller
 
                 $data = \App\Models\PsikotestReport::calculateScores($data, $data['report_type']);
                 PsikotestReport::updateOrCreate(['applicant_id' => $applicantId], $data);
-                Applicant::where('id', $applicantId)->update(['tanggal_test' => $tanggalTest]);
+                // Update tanggal_test dan status jika perlu
+                $applicant = Applicant::find($applicantId);
+                $newStatus = $applicant->status;
+                if ($applicant && ($applicant->status !== 'accepted' && $applicant->status !== 'rejected')) {
+                    $newStatus = 'tested';
+                }
+                Applicant::where('id', $applicantId)->update([
+                    'tanggal_test' => $tanggalTest,
+                    'status' => $newStatus
+                ]);
                 $count++;
             }
         }
