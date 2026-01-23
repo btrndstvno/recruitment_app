@@ -317,6 +317,7 @@ class ImportController extends Controller
                 }
                 Applicant::where('id', $applicantId)->update($updateData);
                 $count++;
+                
             }
         }
         
