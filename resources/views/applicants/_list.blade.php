@@ -66,7 +66,7 @@
                                 </div>
                                 <div>
                                     <div class="applicant-name d-flex align-items-center gap-2">
-                                        <span title="Color Code" class="flex-shrink-0" style="display:inline-block;width:16px;height:16px;border-radius:50%;border:1.5px solid #eee;
+                                        <span title="Color Code" class="flex-shrink-0" style="display:inline-block;width:16px;height:16px;border-radius:50%;border:1.5px solid #ffffff;
                                             background:
                                                 {{
                                                     $applicant->color_code == 'merah' ? '#e74c3c' :
@@ -74,7 +74,7 @@
                                                     ($applicant->color_code == 'biru' ? '#3498db' :
                                                     ($applicant->color_code == 'hijau' ? '#27ae60' :
                                                     ($applicant->color_code == 'hitam' ? '#222222' :
-                                                    ($applicant->color_code == 'abu-abu' ? '#95a5a6' : 'transparent')))))
+                                                    ($applicant->color_code == 'abu-abu' ? '#95a5a6' : '#95a5a6') ))))
                                                 }};"></span>
                                         <span class="text-truncate">{{ $applicant->nama_lengkap }}</span>
                                     </div>
