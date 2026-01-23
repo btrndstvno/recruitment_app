@@ -54,7 +54,7 @@
                 @foreach($applicants as $index => $applicant)
                     <tr data-id="{{ $applicant->id }}" class="selectable-row">
                         <td class="text-center">
-                            <span class="text-muted fw-medium">{{ $applicants->firstItem() + $index }}</span>
+                            <span class="text-muted fw-medium">{{ $applicant->applicant_number }}</span>
                         </td>
                         <td>
                             <div class="applicant-info">

@@ -310,14 +310,12 @@ class ImportController extends Controller
                 PsikotestReport::updateOrCreate(['applicant_id' => $applicantId], $data);
                 // Update tanggal_test dan status jika perlu
                 $applicant = Applicant::find($applicantId);
-                $newStatus = $applicant->status;
+                $updateData = ['tanggal_test' => $tanggalTest];
                 if ($applicant && ($applicant->status !== 'accepted' && $applicant->status !== 'rejected')) {
-                    $newStatus = 'tested';
+                    // Jika ada tanggal_test & laporan psikotest, status jadi 'tested'
+                    $updateData['status'] = 'tested';
                 }
-                Applicant::where('id', $applicantId)->update([
-                    'tanggal_test' => $tanggalTest,
-                    'status' => $newStatus
-                ]);
+                Applicant::where('id', $applicantId)->update($updateData);
                 $count++;
             }
         }
