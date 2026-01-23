@@ -31,7 +31,12 @@
         <table class="table table-modern mb-0">
             <thead>
                 <tr>
-                    <th class="text-center" style="width: 60px; min-width: 60px;">No</th>
+                    <th class="text-center" style="width: 90px; min-width: 90px;">
+                        <a href="{{ getSortUrl('applicant_number') }}" class="text-decoration-none text-dark d-flex align-items-center justify-content-center w-100 request-sort">
+                            <span>No ID</span>
+                            {!! getSortIcon('applicant_number') !!}
+                        </a>
+                    </th>
                     <th>
                         <a href="{{ getSortUrl('nama_lengkap') }}" class="text-decoration-none text-dark d-flex align-items-center justify-content-between w-100 request-sort">
                             <span>Nama Pelamar</span>

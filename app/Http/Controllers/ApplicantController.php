@@ -72,9 +72,11 @@ class ApplicantController extends Controller
         $sortDirection = $request->get('direction', 'asc'); 
 
         // Whitelist kolom yang diizinkan untuk mencegah error/sql injection
-        $allowedColumns = ['nama_lengkap', 'tanggal_lamaran', 'created_at'];
+        $allowedColumns = ['nama_lengkap', 'tanggal_lamaran', 'created_at', 'applicant_number'];
 
-        if (in_array($sortColumn, $allowedColumns)) {
+        if ($sortColumn === 'applicant_number') {
+            $query->orderByRaw('CAST(applicant_number AS UNSIGNED) ' . $sortDirection);
+        } else if (in_array($sortColumn, $allowedColumns)) {
             $query->orderBy($sortColumn, $sortDirection);
         } else {
             $query->orderBy('nama_lengkap', 'asc');
