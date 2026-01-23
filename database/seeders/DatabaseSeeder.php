@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
         User::updateOrCreate(
-            ['email'=> 'teshrd2@company.com'],
+            ['email'=> 'teshrd1@company.com'],
             [
                 'name' => "HRD 1", 
                 'password' => Hash::make('11111111'),
@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
         User::updateOrCreate(
-            ['email' => 'teshrd3@company.com'],
+            ['email' => 'teshrd2@company.com'],
             [
                 'name' => 'HRD 2',
                 'password' => Hash::make('11111111'),
@@ -42,7 +42,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
         User::updateOrCreate(
-            ['email' => 'teshrd4@company.com'],
+            ['email' => 'teshrd3@company.com'],
             [
                 'name' => 'HRD 3',
                 'password' => Hash::make('11111111'),
@@ -50,7 +50,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
         User::updateOrCreate(
-            ['email' => 'teshrd5@company.com'],
+            ['email' => 'teshrd4@company.com'],
             [
                 'name' => 'HRD 4',
                 'password' => Hash::make('11111111'),
