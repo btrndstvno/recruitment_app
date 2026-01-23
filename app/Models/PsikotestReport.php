@@ -150,12 +150,18 @@ class PsikotestReport extends Model
      */
     public static function calculateAverage(array $values)
     {
-        // Filter out null, empty string, and 0 values (only count valid 1-5 scores)
-        $filtered = array_filter($values, fn($v) => $v !== null && $v !== '' && $v > 0);
-        if (count($filtered) === 0) {
-            return null;
+        // N/A (null/kosong) dihitung 0, pembagi tetap total soal
+        $total = count($values);
+        if ($total === 0) return null;
+        $sum = 0;
+        foreach ($values as $v) {
+            if ($v === null || $v === '' || $v === 'N/A') {
+                $sum += 0;
+            } else {
+                $sum += floatval($v);
+            }
         }
-        return round(array_sum($filtered) / count($filtered), 2);
+        return round($sum / $total, 2);
     }
 
     protected $casts = [
