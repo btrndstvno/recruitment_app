@@ -91,7 +91,7 @@ class ImportController extends Controller
 
                 $applyDate = now();
                 if (!empty($row['apply_date'])) {
-                    try { $applyDate = Carbon::parse($row['apply_date']); } catch (\Exception $e) {}
+                    try { $applyDate = \Carbon\Carbon::parse($row['apply_date']); } catch (\Exception $e) {}
                 }
 
                 $noKtp = $row['no_ktp'] ?? '-';
@@ -103,6 +103,33 @@ class ImportController extends Controller
                 $colorRaw = strtolower(trim($row['color_string'] ?? $row['color_code'] ?? ''));
                 $colorMap = ['red'=>'merah', 'yellow'=>'kuning', 'blue'=>'biru', 'green'=>'hijau', 'black'=>'hitam'];
                 $colorCode = $colorMap[$colorRaw] ?? null;
+
+                // --- LOGIC BARU: EEO AGE ---
+                $eeoCategory = $row['eeo_age'] ?? null; // 1. Cek kolom EEO Age dari Excel
+                $birthDate = null;
+
+                // 2. Cek Tanggal Lahir dari Excel (jika kolom bernama 'date_of_birth')
+                if (!empty($row['date_of_birth'])) { 
+                    try { 
+                        $birthDate = \Carbon\Carbon::parse($row['date_of_birth']); 
+                        
+                        // 3. Jika EEO Age kosong, hitung dari Tanggal Lahir
+                        if (empty($eeoCategory)) {
+                            $age = $birthDate->age; // Carbon helper
+                            if ($age <= 17) $eeoCategory = "0-17";
+                            elseif ($age <= 25) $eeoCategory = "18-25";
+                            elseif ($age <= 35) $eeoCategory = "26-35";
+                            elseif ($age <= 45) $eeoCategory = "36-45";
+                            elseif ($age <= 55) $eeoCategory = "46-55";
+                            else $eeoCategory = "56+";
+                        }
+                    } catch (\Exception $e) {}
+                }
+
+                // 4. Default jika keduanya kosong
+                if (empty($eeoCategory)) {
+                    $eeoCategory = '18-25'; // Default safe value
+                }
 
                 Applicant::updateOrCreate(
                     ['applicant_number' => $appNum],
@@ -118,9 +145,12 @@ class ImportController extends Controller
                         'color_code'   => $colorCode,
                         'gender'       => $gender,
                         'status'       => $status,
-                        'tempat_lahir' => '-',
-                        'tanggal_lahir'=> '1900-01-01', // Default
-                        'umur'         => 0,
+                        
+                        // Field Baru
+                        'tempat_lahir' => $row['birth_place'] ?? null,
+                        'tanggal_lahir'=> $birthDate,   
+                        'umur'         => $eeoCategory, // Masuk sebagai string EEO
+                        
                         'nama_sekolah' => '-',
                         'jurusan'      => '-',
                         'tahun_lulus'  => date('Y'),
@@ -136,7 +166,6 @@ class ImportController extends Controller
             return back()->with('error', 'Error Import Applicant: ' . $e->getMessage());
         }
     }
-
     // --- MODUL 2: IMPORT PENDIDIKAN ---
     private function processEducation($path, $type)
     {

@@ -108,25 +108,31 @@
 
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <label for="tempat_lahir" class="form-label">Tempat Lahir <span class="text-danger">*</span></label>
+                    <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
                     <input type="text" class="form-control @error('tempat_lahir') is-invalid @enderror" 
-                           id="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir', $applicant->tempat_lahir) }}" required>
+                        id="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir') }}">
                     @error('tempat_lahir')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="tanggal_lahir" class="form-label">Tanggal Lahir <span class="text-danger">*</span></label>
+                    <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
                     <input type="date" class="form-control @error('tanggal_lahir') is-invalid @enderror" 
-                           id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir', $applicant->tanggal_lahir->format('Y-m-d')) }}" required>
+                        id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}">
                     @error('tanggal_lahir')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="umur" class="form-label">Umur <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control @error('umur') is-invalid @enderror" 
-                           id="umur" name="umur" value="{{ old('umur', $applicant->umur) }}" min="15" max="100" required>
+                    <label for="umur" class="form-label">Kategori Umur (EEO) <span class="text-danger">*</span></label>
+                    <select class="form-select @error('umur') is-invalid @enderror" id="umur" name="umur" required>
+                        <option value="">-- Pilih Kategori --</option>
+                        @foreach(['0-17', '18-25', '26-35', '36-45', '46-55', '56+'] as $cat)
+                            <option value="{{ $cat }}" {{ (old('umur', $applicant->umur) == $cat) ? 'selected' : '' }}>
+                                {{ $cat }}
+                            </option>
+                        @endforeach
+                    </select>
                     @error('umur')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

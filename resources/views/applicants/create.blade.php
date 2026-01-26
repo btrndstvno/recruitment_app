@@ -103,27 +103,34 @@
                 </div>
             </div>
 
-            <div class="row">
+           <div class="row">
                 <div class="col-md-4 mb-3">
-                    <label for="tempat_lahir" class="form-label">Tempat Lahir <span class="text-danger">*</span></label>
+                    <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
                     <input type="text" class="form-control @error('tempat_lahir') is-invalid @enderror" 
-                           id="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir') }}" required>
+                        id="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir') }}">
                     @error('tempat_lahir')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="tanggal_lahir" class="form-label">Tanggal Lahir <span class="text-danger">*</span></label>
+                    <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
                     <input type="date" class="form-control @error('tanggal_lahir') is-invalid @enderror" 
-                           id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}" required>
+                        id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}">
                     @error('tanggal_lahir')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="umur" class="form-label">Umur <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control @error('umur') is-invalid @enderror" 
-                           id="umur" name="umur" value="{{ old('umur') }}" min="15" max="100" required>
+                    <label for="umur" class="form-label">Kategori Umur (EEO) <span class="text-danger">*</span></label>
+                    <select class="form-select @error('umur') is-invalid @enderror" id="umur" name="umur" required>
+                        <option value="">-- Pilih Kategori --</option>
+                        <option value="0-17" {{ old('umur') == '0-17' ? 'selected' : '' }}>0-17</option>
+                        <option value="18-25" {{ old('umur') == '18-25' ? 'selected' : '' }}>18-25</option>
+                        <option value="26-35" {{ old('umur') == '26-35' ? 'selected' : '' }}>26-35</option>
+                        <option value="36-45" {{ old('umur') == '36-45' ? 'selected' : '' }}>36-45</option>
+                        <option value="46-55" {{ old('umur') == '46-55' ? 'selected' : '' }}>46-55</option>
+                        <option value="56+" {{ old('umur') == '56+' ? 'selected' : '' }}>56+</option>
+                    </select>
                     @error('umur')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -335,9 +342,9 @@
 
         togglePklFields(); // Initial state
 
-        // Auto calculate age from birth date
+        // Auto calculate age from birth date and map to EEO category
         const tanggalLahir = document.getElementById('tanggal_lahir');
-        const umur = document.getElementById('umur');
+        const umurSelect = document.getElementById('umur');
 
         tanggalLahir.addEventListener('change', function() {
             if (this.value) {
@@ -345,10 +352,30 @@
                 const today = new Date();
                 let age = today.getFullYear() - birthDate.getFullYear();
                 const monthDiff = today.getMonth() - birthDate.getMonth();
+                
+                // Hitung umur angka presisi
                 if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
                     age--;
                 }
-                umur.value = age;
+
+                // Mapping ke EEO Category
+                let eeoCategory = "";
+                if (age <= 17) {
+                    eeoCategory = "0-17";
+                } else if (age >= 18 && age <= 25) {
+                    eeoCategory = "18-25";
+                } else if (age >= 26 && age <= 35) {
+                    eeoCategory = "26-35";
+                } else if (age >= 36 && age <= 45) {
+                    eeoCategory = "36-45";
+                } else if (age >= 46 && age <= 55) {
+                    eeoCategory = "46-55";
+                } else {
+                    eeoCategory = "56+";
+                }
+
+                // Set value select option
+                umurSelect.value = eeoCategory;
             }
         });
     });

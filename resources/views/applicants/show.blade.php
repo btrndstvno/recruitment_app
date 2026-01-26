@@ -143,7 +143,7 @@
                         </span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">Umur</span>
+                        <span class="info-label">EEO Age</span>
                         <span class="info-value">{{ $applicant->umur }} tahun</span>
                     </div>
                 </div>
