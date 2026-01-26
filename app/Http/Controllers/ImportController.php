@@ -136,7 +136,6 @@ class ImportController extends Controller
                 if (empty($eeoCategory)) $eeoCategory = '18-25';
                 // ---------------------
 
-                // PERBAIKAN UTAMA DISINI: Gunakan firstOrNew, bukan updateOrCreate
                 $applicant = Applicant::firstOrNew(['applicant_number' => $appNum]);
 
                 // 1. Update Data Pribadi (Selalu di-update)
@@ -168,7 +167,7 @@ class ImportController extends Controller
                     // --- JIKA PELAMAR LAMA (UPDATE) ---
                     // JANGAN update nama_sekolah/jurusan/tahun_lulus (biarkan data lama)
 
-                    // Logika Status Pintar:
+                    // Logika :
                     // Hanya update status jika Excel secara eksplisit bilang 'accepted'/'rejected'
                     // ATAU jika status saat ini masih 'pending'.
                     // Jika status saat ini sudah 'tested', JANGAN ditimpa jadi 'pending'.
