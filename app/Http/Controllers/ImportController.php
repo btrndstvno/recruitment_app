@@ -69,11 +69,18 @@ class ImportController extends Controller
         }
     }
 
-    // --- MODUL 1: IMPORT APPLICANT ---
+   // --- MODUL 1: IMPORT APPLICANT ---
     private function processApplicants($path, $type)
     {
         $rows = SimpleExcelReader::create($path, $type)->headersToSnakeCase(true)->getRows();
         $count = 0;
+
+        // Helper untuk membersihkan No HP
+        $cleanPhone = function($number) {
+            if (empty($number)) return null;
+            $cleaned = preg_replace('/[^0-9]/', '', (string)$number);
+            return $cleaned ?: null;
+        };
 
         DB::beginTransaction();
         try {
@@ -83,6 +90,10 @@ class ImportController extends Controller
 
                 $fullName = trim(($row['first_name'] ?? '') . ' ' . ($row['middle_name'] ?? '') . ' ' . ($row['last_name'] ?? ''));
                 
+                // Sanitasi No HP
+                $noHp1 = $cleanPhone($row['home_phone'] ?? null) ?? '-';
+                $noHp2 = $cleanPhone($row['work_phone'] ?? null);
+
                 $gender = 'Laki-laki';
                 if (isset($row['gender_gb'])) {
                     $g = strtoupper($row['gender_gb']);
@@ -96,26 +107,23 @@ class ImportController extends Controller
 
                 $noKtp = $row['no_ktp'] ?? '-';
                 
+                // Status dari Excel
                 $statusRaw = strtolower(trim($row['status'] ?? ''));
-                $status = ($statusRaw == 'hired' || $statusRaw == 'accepted') ? 'accepted' : 
-                          (($statusRaw == 'reject' || $statusRaw == 'rejected') ? 'rejected' : 'pending');
+                $statusExcel = ($statusRaw == 'hired' || $statusRaw == 'accepted') ? 'accepted' : 
+                               (($statusRaw == 'reject' || $statusRaw == 'rejected') ? 'rejected' : 'pending');
 
                 $colorRaw = strtolower(trim($row['color_string'] ?? $row['color_code'] ?? ''));
                 $colorMap = ['red'=>'merah', 'yellow'=>'kuning', 'blue'=>'biru', 'green'=>'hijau', 'black'=>'hitam'];
                 $colorCode = $colorMap[$colorRaw] ?? null;
 
-                // --- LOGIC BARU: EEO AGE ---
-                $eeoCategory = $row['eeo_age'] ?? null; // 1. Cek kolom EEO Age dari Excel
+                // --- EEO AGE LOGIC ---
+                $eeoCategory = $row['eeo_age'] ?? null;
                 $birthDate = null;
-
-                // 2. Cek Tanggal Lahir dari Excel (jika kolom bernama 'date_of_birth')
                 if (!empty($row['date_of_birth'])) { 
                     try { 
                         $birthDate = \Carbon\Carbon::parse($row['date_of_birth']); 
-                        
-                        // 3. Jika EEO Age kosong, hitung dari Tanggal Lahir
                         if (empty($eeoCategory)) {
-                            $age = $birthDate->age; // Carbon helper
+                            $age = $birthDate->age;
                             if ($age <= 17) $eeoCategory = "0-17";
                             elseif ($age <= 25) $eeoCategory = "18-25";
                             elseif ($age <= 35) $eeoCategory = "26-35";
@@ -125,37 +133,51 @@ class ImportController extends Controller
                         }
                     } catch (\Exception $e) {}
                 }
+                if (empty($eeoCategory)) $eeoCategory = '18-25';
+                // ---------------------
 
-                // 4. Default jika keduanya kosong
-                if (empty($eeoCategory)) {
-                    $eeoCategory = '18-25'; // Default safe value
+                // PERBAIKAN UTAMA DISINI: Gunakan firstOrNew, bukan updateOrCreate
+                $applicant = Applicant::firstOrNew(['applicant_number' => $appNum]);
+
+                // 1. Update Data Pribadi (Selalu di-update)
+                $applicant->nama_lengkap = $fullName;
+                $applicant->no_ktp = $noKtp;
+                $applicant->tanggal_lamaran = $applyDate;
+                $applicant->alamat = ($row['address_1'] ?? '') . ' ' . ($row['address_2'] ?? '');
+                $applicant->kota = $row['city'] ?? '-';
+                $applicant->provinsi = $row['state'] ?? '-';
+                $applicant->no_hp_1 = $noHp1;
+                $applicant->no_hp_2 = $noHp2;
+                $applicant->color_code = $colorCode;
+                $applicant->gender = $gender;
+                $applicant->tempat_lahir = $row['birth_place'] ?? null;
+                $applicant->tanggal_lahir = $birthDate;
+                $applicant->umur = $eeoCategory;
+
+                // 2. Cek apakah ini Data Baru atau Update
+                if (!$applicant->exists) {
+                    // --- JIKA PELAMAR BARU ---
+                    // Set status sesuai excel (default pending)
+                    $applicant->status = $statusExcel;
+
+                    // Set default pendidikan (wajib diisi agar database tidak error)
+                    $applicant->nama_sekolah = '-';
+                    $applicant->jurusan = '-';
+                    $applicant->tahun_lulus = date('Y');
+                } else {
+                    // --- JIKA PELAMAR LAMA (UPDATE) ---
+                    // JANGAN update nama_sekolah/jurusan/tahun_lulus (biarkan data lama)
+
+                    // Logika Status Pintar:
+                    // Hanya update status jika Excel secara eksplisit bilang 'accepted'/'rejected'
+                    // ATAU jika status saat ini masih 'pending'.
+                    // Jika status saat ini sudah 'tested', JANGAN ditimpa jadi 'pending'.
+                    if ($statusExcel !== 'pending' || $applicant->status === 'pending') {
+                         $applicant->status = $statusExcel;
+                    }
                 }
 
-                Applicant::updateOrCreate(
-                    ['applicant_number' => $appNum],
-                    [
-                        'nama_lengkap'    => $fullName,
-                        'no_ktp'          => $noKtp,
-                        'tanggal_lamaran' => $applyDate,
-                        'alamat'       => ($row['address_1'] ?? '') . ' ' . ($row['address_2'] ?? ''),
-                        'kota'         => $row['city'] ?? '-',
-                        'provinsi'     => $row['state'] ?? '-',
-                        'no_hp_1'      => $row['home_phone'] ?? '-',
-                        'no_hp_2'      => $row['work_phone'] ?? null,
-                        'color_code'   => $colorCode,
-                        'gender'       => $gender,
-                        'status'       => $status,
-                        
-                        // Field Baru
-                        'tempat_lahir' => $row['birth_place'] ?? null,
-                        'tanggal_lahir'=> $birthDate,   
-                        'umur'         => $eeoCategory, // Masuk sebagai string EEO
-                        
-                        'nama_sekolah' => '-',
-                        'jurusan'      => '-',
-                        'tahun_lulus'  => date('Y'),
-                    ]
-                );
+                $applicant->save();
                 $count++;
             }
             DB::commit();
@@ -166,6 +188,7 @@ class ImportController extends Controller
             return back()->with('error', 'Error Import Applicant: ' . $e->getMessage());
         }
     }
+    
     // --- MODUL 2: IMPORT PENDIDIKAN ---
     private function processEducation($path, $type)
     {
