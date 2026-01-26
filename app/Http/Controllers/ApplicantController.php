@@ -56,15 +56,15 @@ class ApplicantController extends Controller
         // Date filter - flexible: tanggal spesifik, bulan, atau tahun
         if ($request->filled('tanggal')) {
             // Filter by specific date
-            $query->whereDate('tanggal_lamaran', $request->tanggal);
+            $query->whereDate('tanggal_test', $request->tanggal);
         } else {
             // Filter by month if provided
             if ($request->filled('bulan')) {
-                $query->whereMonth('tanggal_lamaran', $request->bulan);
+                $query->whereMonth('tanggal_test', $request->bulan);
             }
             // Filter by year if provided
             if ($request->filled('tahun')) {
-                $query->whereYear('tanggal_lamaran', $request->tahun);
+                $query->whereYear('tanggal_test', $request->tahun);
             }
         }
         // Logika Sorting Dinamis
@@ -72,7 +72,7 @@ class ApplicantController extends Controller
         $sortDirection = $request->get('direction', 'asc'); 
 
         // Whitelist kolom yang diizinkan untuk mencegah error/sql injection
-        $allowedColumns = ['nama_lengkap', 'tanggal_lamaran', 'created_at', 'applicant_number'];
+        $allowedColumns = ['nama_lengkap', 'tanggal_test', 'created_at', 'applicant_number'];
 
         if ($sortColumn === 'applicant_number') {
             $query->orderByRaw('CAST(applicant_number AS UNSIGNED) ' . $sortDirection);
@@ -407,13 +407,13 @@ class ApplicantController extends Controller
 
         // Date filters
         if ($request->filled('tanggal')) {
-            $query->whereDate('tanggal_lamaran', $request->tanggal);
+            $query->whereDate('tanggal_test', $request->tanggal);
         } else {
             if ($request->filled('bulan')) {
-                $query->whereMonth('tanggal_lamaran', $request->bulan);
+                $query->whereMonth('tanggal_test', $request->bulan);
             }
             if ($request->filled('tahun')) {
-                $query->whereYear('tanggal_lamaran', $request->tahun);
+                $query->whereYear('tanggal_test', $request->tahun);
             }
         }
 
