@@ -167,8 +167,15 @@ class ApplicantController extends Controller
                     ucfirst($activeApplicant->status) . ".");
         }
 
+
         $validated['is_guru'] = $request->has('is_guru');
         $validated['is_pkl'] = $request->has('is_pkl');
+
+        // Generate applicant_number otomatis (max applicant_number di database + 1) hanya jika tidak ada di input
+        if (empty($validated['applicant_number'])) {
+            $maxApplicantNumber = \DB::table('applicants')->max('applicant_number');
+            $validated['applicant_number'] = $maxApplicantNumber ? ($maxApplicantNumber + 1) : 1;
+        }
 
         // color_code sudah termasuk di $fillable
         Applicant::create($validated);

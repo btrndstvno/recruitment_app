@@ -49,7 +49,8 @@ class Applicant extends Model
         'is_guru' => 'boolean',
         'is_pkl' => 'boolean',
         'ipk' => 'decimal:2',
-    ];
+        'applicant_number' => 'integer',
+     ];
 
     /**
      * Get the psikotest report for this applicant.
