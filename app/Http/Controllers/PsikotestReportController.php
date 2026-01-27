@@ -37,15 +37,29 @@ class PsikotestReportController extends Controller
         $validated = $this->validateReport($request, $reportType);
         $validated['applicant_id'] = $applicant->id;
         $validated['report_type'] = $reportType;
-        $validated['tanggal_test'] = $applicant->tanggal_test;
+
+        // Sinkronisasi tanggal_test
+        if (empty($applicant->tanggal_test)) {
+            // Jika applicant belum punya tanggal_test, ambil dari input laporan psikotest
+            $validated['tanggal_test'] = $request->input('tanggal_test');
+            // Simpan ke applicant juga
+            $applicant->update([
+                'tanggal_test' => $validated['tanggal_test'],
+                'status' => 'tested',
+            ]);
+        } else {
+            // Jika sudah ada, gunakan tanggal_test dari applicant
+            $validated['tanggal_test'] = $applicant->tanggal_test;
+            // Pastikan status tested
+            if ($applicant->status !== 'tested') {
+                $applicant->update(['status' => 'tested']);
+            }
+        }
 
         // Calculate scores based on report type
         $validated = $this->calculateScores($validated, $reportType);
 
         PsikotestReport::create($validated);
-
-        // Update applicant status
-        $applicant->update(['status' => 'tested']);
 
         return redirect()->route('applicants.show', $applicant)
             ->with('success', 'Laporan psikotest berhasil disimpan!');
@@ -101,6 +115,20 @@ class PsikotestReportController extends Controller
 
         $validated = $this->validateReport($request, $reportType);
         $validated['report_type'] = $reportType;
+
+        // Sinkronisasi tanggal_test
+        if (empty($applicant->tanggal_test)) {
+            $validated['tanggal_test'] = $request->input('tanggal_test');
+            $applicant->update([
+                'tanggal_test' => $validated['tanggal_test'],
+                'status' => 'tested',
+            ]);
+        } else {
+            $validated['tanggal_test'] = $applicant->tanggal_test;
+            if ($applicant->status !== 'tested') {
+                $applicant->update(['status' => 'tested']);
+            }
+        }
 
         // Calculate scores based on report type
         $validated = $this->calculateScores($validated, $reportType);

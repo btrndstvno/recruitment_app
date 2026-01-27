@@ -297,12 +297,17 @@ class ApplicantController extends Controller
         $validated['is_guru'] = $request->has('is_guru');
         $validated['is_pkl'] = $request->has('is_pkl');
 
+        // Jika tanggal_test diisi, status otomatis jadi 'tested'
+        if (!empty($validated['tanggal_test'])) {
+            $validated['status'] = 'tested';
+        }
+
         // color_code sudah termasuk di $fillable
         $applicant->update($validated);
 
         // Preserve query parameters (page, filters) when redirecting
         $queryParams = $request->only(['page', 'search', 'tipe', 'tanggal', 'bulan', 'tahun']);
-        
+
         return redirect()
             ->route('applicants.show', array_merge(['applicant' => $applicant], $queryParams))
             ->with('success', 'Data pelamar berhasil diperbarui!');
