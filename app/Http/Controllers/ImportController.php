@@ -309,11 +309,34 @@ class ImportController extends Controller
                     } catch (\Exception $e) {}
                 }
 
+
+                // Gabungkan semua kolom setelah kolom 'kesimpulan' yang masih berisi data ke dalam field kesimpulan_saran
+                $kesimpulanSaran = '';
+                $foundKesimpulan = false;
+                foreach (array_keys($row) as $colKey) {
+                    if ($foundKesimpulan) {
+                        $val = trim((string)($row[$colKey] ?? ''));
+                        if ($val !== '') {
+                            $kesimpulanSaran .= ($kesimpulanSaran !== '' ? "\n" : '') . $val;
+                        }
+                    }
+                    if (!$foundKesimpulan && (strtolower($colKey) === 'kesimpulan' || strtolower($colKey) === 'kesimpulan_saran')) {
+                        $val = trim((string)($row[$colKey] ?? ''));
+                        if ($val !== '') {
+                            $kesimpulanSaran .= $val;
+                        }
+                        $foundKesimpulan = true;
+                    }
+                }
+                // Pisahkan setiap kalimat yang diakhiri titik menjadi baris baru
+                if ($kesimpulanSaran !== '') {
+                    $kesimpulanSaran = preg_replace('/\.(?!\n|$)\s*/', ".\n", $kesimpulanSaran);
+                }
                 $data = [
                     'applicant_id' => $applicantId,
                     'report_type'  => $isType38 ? '38' : '34',
                     'tanggal_test' => $tanggalTest,
-                    'kesimpulan_saran' => $row['kesimpulan'] ?? null,
+                    'kesimpulan_saran' => $kesimpulanSaran !== '' ? $kesimpulanSaran : null,
                 ];
 
                 $getValue = function($key) use ($row) {
