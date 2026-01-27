@@ -53,18 +53,22 @@ class ApplicantController extends Controller
             $query->where('status', $request->status);
         }
 
-        // Date filter - flexible: tanggal spesifik, bulan, atau tahun
+        // Date filter - flexible: tanggal spesifik, bulan, atau tahun, dan field dinamis
+        $tanggalField = $request->input('tanggal_filter', 'tanggal_test');
+        if (!in_array($tanggalField, ['tanggal_test', 'tanggal_lamaran'])) {
+            $tanggalField = 'tanggal_test';
+        }
         if ($request->filled('tanggal')) {
             // Filter by specific date
-            $query->whereDate('tanggal_test', $request->tanggal);
+            $query->whereDate($tanggalField, $request->tanggal);
         } else {
             // Filter by month if provided
             if ($request->filled('bulan')) {
-                $query->whereMonth('tanggal_test', $request->bulan);
+                $query->whereMonth($tanggalField, $request->bulan);
             }
             // Filter by year if provided
             if ($request->filled('tahun')) {
-                $query->whereYear('tanggal_test', $request->tahun);
+                $query->whereYear($tanggalField, $request->tahun);
             }
         }
         // Logika Sorting Dinamis

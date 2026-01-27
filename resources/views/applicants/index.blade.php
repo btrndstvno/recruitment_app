@@ -125,6 +125,16 @@
             <div class="filter-section">
                 <div class="filter-section-title"><i class="bi bi-calendar3"></i> Filter Tanggal</div>
                 <div class="row g-3 align-items-end">
+                    <div class="col-lg-12 col-md-12 col-12 mb-2">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="tanggal_filter" id="filter_tanggal_lamaran" value="tanggal_lamaran" {{ request('tanggal_filter', 'tanggal_test') == 'tanggal_lamaran' ? 'checked' : '' }}>
+                            <label class="form-check-label" for="filter_tanggal_lamaran">Tanggal Lamaran</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="tanggal_filter" id="filter_tanggal_test" value="tanggal_test" {{ request('tanggal_filter', 'tanggal_test') == 'tanggal_test' ? 'checked' : '' }}>
+                            <label class="form-check-label" for="filter_tanggal_test">Tanggal Test</label>
+                        </div>
+                    </div>
                     <div class="col-lg-3 col-md-4 col-12">
                         <label for="tanggal" class="form-label">Tanggal Spesifik</label>
                         <input type="date" class="form-control" id="tanggal" name="tanggal" value="{{ request('tanggal') }}">
@@ -208,6 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const bulanSelect = document.getElementById('bulan');
     const tahunSelect = document.getElementById('tahun');
     const searchLoading = document.getElementById('searchLoading');
+    const tanggalFilterRadios = document.getElementsByName('tanggal_filter');
     
     // Setup Bulk Action
     const STORAGE_KEY = 'applicant_selected_ids';
@@ -275,9 +286,8 @@ document.addEventListener('DOMContentLoaded', function() {
     window.submitFilter = function(pageUrl = null) {
         if(searchLoading) searchLoading.classList.remove('d-none');
         let url = pageUrl ? pageUrl : '{{ route("applicants.index") }}';
-        
         const params = new URLSearchParams(pageUrl ? (new URL(pageUrl)).search : window.location.search);
-        
+
         // Update Params
         if (searchInput && searchInput.value) params.set('search', searchInput.value); else params.delete('search');
         if (tipeSelect && tipeSelect.value) params.set('tipe', tipeSelect.value); else params.delete('tipe');
@@ -286,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Logic Checkbox
         const keys = Array.from(params.keys());
         keys.forEach(k => { if(k.includes('search_fields')) params.delete(k); });
-        
+
         const checkboxes = document.querySelectorAll('.search-field-cb:checked');
         const totalCb = document.querySelectorAll('.search-field-cb').length;
         if (checkboxes.length > 0 && checkboxes.length < totalCb) {
@@ -302,7 +312,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (bulanSelect && bulanSelect.value) params.set('bulan', bulanSelect.value); else params.delete('bulan');
             if (tahunSelect && tahunSelect.value) params.set('tahun', tahunSelect.value); else params.delete('tahun');
         }
-        
+
+        // Tanggal Filter Field
+        let tanggalFilter = 'tanggal_test';
+        if (tanggalFilterRadios && tanggalFilterRadios.length) {
+            tanggalFilterRadios.forEach(radio => { if (radio.checked) tanggalFilter = radio.value; });
+        }
+        params.set('tanggal_filter', tanggalFilter);
+
         if ("{{ request('archived') }}" == "1") params.set('archived', '1');
 
         const finalUrl = `${url.split('?')[0]}?${params.toString()}`;
@@ -371,6 +388,12 @@ document.addEventListener('DOMContentLoaded', function() {
     [tipeSelect, statusSelect, bulanSelect, tahunSelect, tanggalInput].forEach(el => {
         if(el) el.addEventListener('change', () => submitFilter());
     });
+    // Radio tanggal_filter
+    if (tanggalFilterRadios && tanggalFilterRadios.length) {
+        tanggalFilterRadios.forEach(radio => {
+            radio.addEventListener('change', () => submitFilter());
+        });
+    }
 
     document.querySelectorAll('.search-field-cb').forEach(cb => {
         cb.addEventListener('change', () => submitFilter());
