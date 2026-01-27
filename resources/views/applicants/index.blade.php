@@ -80,16 +80,16 @@
                                 <label class="form-check-label small" for="sf_nama">Nama</label>
                             </div>
                             <div class="form-check form-check-inline m-0">
+                                <input class="form-check-input search-field-cb" type="checkbox" id="sf_alamat" name="search_fields[]" value="alamat" {{ $isAll || in_array('alamat', $sf ?? []) ? 'checked' : '' }}>
+                                <label class="form-check-label small" for="sf_alamat">Alamat</label>
+                            </div>
+                            <div class="form-check form-check-inline m-0">
                                 <input class="form-check-input search-field-cb" type="checkbox" id="sf_ktp" name="search_fields[]" value="no_ktp" {{ $isAll || in_array('no_ktp', $sf ?? []) ? 'checked' : '' }}>
                                 <label class="form-check-label small" for="sf_ktp">No. KTP</label>
                             </div>
                             <div class="form-check form-check-inline m-0">
                                 <input class="form-check-input search-field-cb" type="checkbox" id="sf_hp" name="search_fields[]" value="no_hp_1" {{ $isAll || in_array('no_hp_1', $sf ?? []) ? 'checked' : '' }}>
                                 <label class="form-check-label small" for="sf_hp">No. HP</label>
-                            </div>
-                            <div class="form-check form-check-inline m-0">
-                                <input class="form-check-input search-field-cb" type="checkbox" id="sf_alamat" name="search_fields[]" value="alamat" {{ $isAll || in_array('alamat', $sf ?? []) ? 'checked' : '' }}>
-                                <label class="form-check-label small" for="sf_alamat">Alamat</label>
                             </div>
                             <div class="form-check form-check-inline m-0">
                                 <input class="form-check-input search-field-cb" type="checkbox" id="sf_id" name="search_fields[]" value="applicant_number" {{ $isAll || in_array('applicant_number', $sf ?? []) ? 'checked' : '' }}>
