@@ -467,15 +467,19 @@ class ApplicantController extends Controller
             $query->where('status', $request->status);
         }
 
-        // Date filters
+        // Date filters (gunakan field dinamis sesuai filter)
+        $tanggalField = $request->input('tanggal_filter', 'tanggal_test');
+        if (!in_array($tanggalField, ['tanggal_test', 'tanggal_lamaran'])) {
+            $tanggalField = 'tanggal_test';
+        }
         if ($request->filled('tanggal')) {
-            $query->whereDate('tanggal_test', $request->tanggal);
+            $query->whereDate($tanggalField, $request->tanggal);
         } else {
             if ($request->filled('bulan')) {
-                $query->whereMonth('tanggal_test', $request->bulan);
+                $query->whereMonth($tanggalField, $request->bulan);
             }
             if ($request->filled('tahun')) {
-                $query->whereYear('tanggal_test', $request->tahun);
+                $query->whereYear($tanggalField, $request->tahun);
             }
         }
 
