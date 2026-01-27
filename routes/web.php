@@ -51,8 +51,12 @@ Route::middleware('auth')->group(function () {
         Route::put('/', [PsikotestReportController::class, 'update'])->name('update');
     });
 
-    // Export Excel Applicants
-    Route::get('applicants-export', [\App\Http\Controllers\ApplicantExportController::class, 'export'])->name('applicants.export');
+
+    // Export Excel Applicants (all)
+    Route::get('applicants-export', [\App\Http\Controllers\ExportController::class, 'export'])->name('applicants.export');
+
+    // Export Excel Selected Applicants (by IDs)
+    Route::post('applicants-export-selected', [\App\Http\Controllers\ApplicantController::class, 'exportSelected'])->name('applicants.exportSelected');
 
     // Redirect home to applicants list
     Route::get('/', function () {

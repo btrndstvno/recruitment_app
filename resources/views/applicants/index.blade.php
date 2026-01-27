@@ -193,6 +193,7 @@
             <button type="button" class="btn btn-warning btn-sm" id="bulkArchiveBtn"><i class="bi bi-archive me-1"></i>Arsipkan</button>
         @endif
         <button type="button" class="btn btn-danger btn-sm" id="bulkDeleteBtn"><i class="bi bi-trash me-1"></i>Hapus</button>
+        <button type="button" class="btn btn-success btn-sm" id="bulkExportBtn"><i class="bi bi-download me-1"></i>Export Selected</button>
     </div>
 </div>
 
@@ -210,6 +211,38 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+        const bulkExportBtn = document.getElementById('bulkExportBtn');
+        // Export Selected Applicants
+        if (bulkExportBtn) {
+            bulkExportBtn.addEventListener('click', function() {
+                if (selectedIds.size === 0) {
+                    Swal.fire('Pilih Data', 'Silakan pilih data yang ingin diexport.', 'info');
+                    return;
+                }
+                // Buat form dinamis untuk POST ke endpoint exportSelected
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ route('applicants.exportSelected') }}';
+                form.target = '_blank';
+                // CSRF
+                const csrf = document.createElement('input');
+                csrf.type = 'hidden';
+                csrf.name = '_token';
+                csrf.value = '{{ csrf_token() }}';
+                form.appendChild(csrf);
+                // IDs
+                Array.from(selectedIds).forEach(id => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'ids[]';
+                    input.value = id;
+                    form.appendChild(input);
+                });
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            });
+        }
     // 1. Setup Selektor
     const searchInput = document.getElementById('search');
     const tipeSelect = document.getElementById('tipe');
