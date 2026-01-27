@@ -31,7 +31,12 @@ class ApplicantController extends Controller
             if (count($fields) > 0) {
                 $query->where(function ($q) use ($search, $fields) {
                     foreach ($fields as $field) {
-                        $q->orWhere($field, 'like', "%{$search}%");
+                        if ($field === 'nama_lengkap') {
+                            // Normalisasi: lowercase dan hilangkan spasi untuk pencarian lebih toleran
+                            $q->orWhereRaw("LOWER(REPLACE(nama_lengkap, ' ', '')) LIKE ?", ['%' . str_replace(' ', '', strtolower($search)) . '%']);
+                        } else {
+                            $q->orWhere($field, 'like', "%{$search}%");
+                        }
                     }
                 });
             }
