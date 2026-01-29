@@ -353,7 +353,7 @@
 
         // Flatpickr untuk tanggal lahir & hitung umur otomatis
         flatpickr("#tanggal_lahir", {
-            dateFormat: "Y-m-d",
+            dateFormat: "d-m-Y",
             locale: "id",
             maxDate: "today",
             allowInput: true,
