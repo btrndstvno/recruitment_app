@@ -34,6 +34,7 @@ class ApplicantController extends Controller
         ];
         $columns = [
             'id', 'applicant_number', 'nama_lengkap', 'alamat', 'kota', 'provinsi', 'no_hp_1', 'no_hp_2', 'no_ktp',
+            'email',
             'tempat_lahir', 'tanggal_lahir', 'gender', 'umur', 'tanggal_lamaran', 'tanggal_test', 'nama_sekolah',
             'jurusan', 'tahun_lulus', 'ipk', 'is_guru', 'is_pkl', 'pkl_awal', 'pkl_akhir', 'pkl_asal_sekolah',
             'pkl_jurusan', 'pkl_tempat', 'catatan', 'color_code', 'status', 'archived_at', 'created_at', 'updated_at'
@@ -169,6 +170,7 @@ class ApplicantController extends Controller
             'no_hp_1' => 'required|string|max:20',
             'no_hp_2' => 'nullable|string|max:20',
             'no_ktp' => 'required|digits:16',
+            'email' => 'nullable|email|max:255',
             'tempat_lahir' => 'nullable|string|max:255',
             'tanggal_lahir' => 'nullable|date',
             'gender' => 'required|in:Laki-laki,Perempuan',
@@ -269,10 +271,11 @@ class ApplicantController extends Controller
             'no_hp_1' => 'required|string|max:20',
             'no_hp_2' => 'nullable|string|max:20',
             'no_ktp' => 'required|digits:16|unique:applicants,no_ktp,' . $applicant->id,
+            'email' => 'nullable|email|max:255',
             'tempat_lahir' => 'nullable|string|max:255',
             'tanggal_lahir' => 'nullable|date',
             'gender' => 'required|in:Laki-laki,Perempuan',
-            'umur' => 'required|string|in:0-17,18-25,26-35,36-45,46-55,56+',
+            'umur' => 'required|integer|min:15',
             'tanggal_lamaran' => 'required|date',
             'tanggal_test' => 'nullable|date',
             'nama_sekolah' => 'required|string|max:255',

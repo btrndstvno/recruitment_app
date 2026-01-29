@@ -29,9 +29,6 @@
                         <i class="bi bi-geo-alt-fill"></i> {{ $applicant->kota }}, {{ $applicant->provinsi }}
                     </span>
                     <span class="profile-meta-item">
-                        <i class="bi bi-envelope-at"></i> {{ $applicant->email ?? '-' }}
-                    </span>
-                    <span class="profile-meta-item">
                         <i class="bi bi-telephone-fill"></i> {{ $applicant->no_hp_1 }}
                     </span>
                     <span class="profile-meta-item">
@@ -89,9 +86,17 @@
                     <i class="bi bi-person-fill"></i>
                 </div>
                 <h5 class="section-title">Data Pribadi</h5>
+                        
             </div>
             <div class="section-body">
                 <div class="info-grid">
+                                        <div class="info-item">
+                                            <span class="info-label">Email</span>
+                                            <span class="info-value">
+                                                <i class="bi bi-envelope me-2"></i>
+                                                {{ $applicant->email ?? '-' }}
+                                            </span>
+                                        </div>
                     <div class="info-item">
                         <span class="info-label">Nama Lengkap</span>
                         <span class="info-value">{{ $applicant->nama_lengkap }}</span>
@@ -104,10 +109,10 @@
                         <span class="info-label">Alamat</span>
                         <span class="info-value">{{ $applicant->alamat }}</span>
                     </div>
-                    <div class="info-item">
+                    <!-- <div class="info-item">
                         <span class="info-label">Kota & Provinsi</span>
                         <span class="info-value">{{ $applicant->kota }}, {{ $applicant->provinsi }}</span>
-                    </div>
+                    </div> -->
                     <div class="info-item">
                         <span class="info-label">No. HP 1</span>
                         <span class="info-value">
@@ -144,7 +149,7 @@
                         </span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">EEO Age</span>
+                        <span class="info-label">Age</span>
                         <span class="info-value">{{ $applicant->umur }} tahun</span>
                     </div>
                 </div>

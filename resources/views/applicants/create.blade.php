@@ -14,19 +14,22 @@
     <div class="card-body">
         <form action="{{ route('applicants.store') }}" method="POST" id="applicantForm" data-loading="true">
             @csrf
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}">
-                @error('email')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-            @csrf
 
             {{-- Data Pribadi --}}
             <h5 class="border-bottom pb-2 mb-3 text-primary">
                 <i class="bi bi-person me-2"></i>Data Pribadi
             </h5>
+            {{-- Input Email Full Width --}}
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                           id="email" name="email" value="{{ old('email') }}" placeholder="contoh@email.com">
+                    @error('email')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label for="color_code" class="form-label">Color Code</label>

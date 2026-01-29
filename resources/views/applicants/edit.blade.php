@@ -21,6 +21,20 @@
             <h5 class="border-bottom pb-2 mb-3 text-primary">
                 <i class="bi bi-person me-2"></i>Data Pribadi
             </h5>
+            {{-- Input Email Full Width (dengan value dari database) --}}
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    {{-- Perhatikan bagian value: mengambil old input ATAU data dari database --}}
+                    <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                           id="email" name="email" 
+                           value="{{ old('email', $applicant->email) }}" 
+                           placeholder="contoh@email.com">
+                    @error('email')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label for="color_code" class="form-label">Color Code</label>
