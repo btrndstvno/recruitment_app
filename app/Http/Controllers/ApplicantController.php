@@ -8,6 +8,60 @@ use Carbon\Carbon;
 
 class ApplicantController extends Controller
 {
+
+    /**
+     * Menampilkan halaman Reporting View (Table Mode)
+     */
+    public function report(Request $request)
+    {
+        $query = Applicant::query();
+
+        // Filter archived by default (show non-archived, or show archived only)
+        if ($request->filled('archived') && $request->archived == '1') {
+            $query->whereNotNull('archived_at');
+        } else {
+            $query->whereNull('archived_at');
+        }
+
+        // Search filter (nama/email/no_hp_1/no_ktp)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('no_hp_1', 'like', "%{$search}%")
+                  ->orWhere('no_ktp', 'like', "%{$search}%");
+            });
+        }
+
+        // Status & Tipe Filter
+        if ($request->filled('status')) $query->where('status', $request->status);
+        if ($request->filled('tipe')) {
+            if ($request->tipe === 'guru') $query->where('is_guru', true);
+            elseif ($request->tipe === 'pkl') $query->where('is_pkl', true);
+            elseif ($request->tipe === 'reguler') $query->where('is_guru', false)->where('is_pkl', false);
+        }
+
+        // Date Filter
+        $tanggalField = $request->input('tanggal_filter', 'tanggal_test');
+        if (!in_array($tanggalField, ['tanggal_test', 'tanggal_lamaran'])) $tanggalField = 'tanggal_test';
+        if ($request->filled('tanggal')) $query->whereDate($tanggalField, $request->tanggal);
+        elseif ($request->filled('bulan')) $query->whereMonth($tanggalField, $request->bulan);
+        elseif ($request->filled('tahun')) $query->whereYear($tanggalField, $request->tahun);
+
+        $query->orderBy('created_at', 'desc');
+        // Search by ID or Nama saja (jika ada input search)
+        if ($request->filled('simple_search')) {
+            $search = $request->simple_search;
+            $query->where(function ($q) use ($search) {
+                $q->where('id', $search)
+                  ->orWhere('nama_lengkap', 'like', "%{$search}%");
+            });
+        }
+        $applicants = $query->paginate(200)->appends($request->query());
+
+        return view('applicants.report', compact('applicants'));
+    }
     /**
      * Export selected applicants (by IDs from request)
      */

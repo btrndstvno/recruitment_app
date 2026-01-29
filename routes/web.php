@@ -21,6 +21,8 @@ Route::middleware('guest')->group(function () {
 
 // Authenticated Routes
 Route::middleware('auth')->group(function () {
+        // Reporting View (Table Mode)
+        Route::get('/applicants/report', [ApplicantController::class, 'report'])->name('applicants.report');
     // Logout
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 

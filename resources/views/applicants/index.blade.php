@@ -40,6 +40,9 @@
             <a href="{{ route('applicants.create') }}" class="btn btn-primary">
                 <i class="bi bi-person-plus me-1"></i>Tambah Pelamar
             </a> 
+            <a href="{{ route('applicants.report') }}" class="btn btn-outline-primary">
+                <i class="bi bi-table me-1"></i>Reporting View
+            </a>
         @endif
     </div>
 </div>
