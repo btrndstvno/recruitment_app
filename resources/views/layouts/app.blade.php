@@ -9,6 +9,7 @@
     {{-- Vite Assets --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     @stack('styles')
 </head>
 <body class="has-sidebar">
@@ -356,6 +357,8 @@
         });
     </script>
     
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
     @stack('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>

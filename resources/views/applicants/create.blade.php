@@ -14,6 +14,14 @@
     <div class="card-body">
         <form action="{{ route('applicants.store') }}" method="POST" id="applicantForm" data-loading="true">
             @csrf
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}">
+                @error('email')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+            @csrf
 
             {{-- Data Pribadi --}}
             <h5 class="border-bottom pb-2 mb-3 text-primary">
@@ -114,15 +122,27 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
-                    <input type="date" class="form-control @error('tanggal_lahir') is-invalid @enderror" 
-                        id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-calendar"></i></span>
+                        <input type="text" 
+                               class="form-control @error('tanggal_lahir') is-invalid @enderror bg-white" 
+                               id="tanggal_lahir" 
+                               name="tanggal_lahir" 
+                               value="{{ old('tanggal_lahir') }}" 
+                               placeholder="Pilih Tanggal Lahir"
+                               readonly>
+                    </div>
                     @error('tanggal_lahir')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="umur" class="form-label">Umur (Otomatis)</label>
-                    <input type="text" class="form-control" id="umur" name="umur" value="" readonly>
+                    <label for="umur" class="form-label">Umur <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control @error('umur') is-invalid @enderror" 
+                           id="umur" name="umur" value="{{ old('umur') }}" readonly required>
+                    @error('umur')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
 
@@ -331,25 +351,32 @@
 
         togglePklFields(); // Initial state
 
-        // Auto calculate age from birth date
-        const umurInput = document.getElementById('umur');
-        const tanggalLahirInput = document.getElementById('tanggal_lahir');
-        if (umurInput && tanggalLahirInput) {
-            tanggalLahirInput.addEventListener('change', function() {
-                const val = this.value;
-                if (!val) {
-                    umurInput.value = '';
-                    return;
+        // Flatpickr untuk tanggal lahir & hitung umur otomatis
+        flatpickr("#tanggal_lahir", {
+            dateFormat: "Y-m-d",
+            locale: "id",
+            maxDate: "today",
+            allowInput: true,
+            disableMobile: "true",
+            onChange: function(selectedDates, dateStr, instance) {
+                calculateAge(selectedDates[0]);
+            },
+            onReady: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    calculateAge(selectedDates[0]);
                 }
-                const today = new Date();
-                const birthDate = new Date(val);
-                let age = today.getFullYear() - birthDate.getFullYear();
-                const m = today.getMonth() - birthDate.getMonth();
-                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-                    age--;
-                }
-                umurInput.value = age;
-            });
+            }
+        });
+
+        function calculateAge(birthDate) {
+            if (!birthDate) return;
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            document.getElementById('umur').value = age;
         }
     });
 </script>

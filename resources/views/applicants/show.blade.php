@@ -29,6 +29,9 @@
                         <i class="bi bi-geo-alt-fill"></i> {{ $applicant->kota }}, {{ $applicant->provinsi }}
                     </span>
                     <span class="profile-meta-item">
+                        <i class="bi bi-envelope-at"></i> {{ $applicant->email ?? '-' }}
+                    </span>
+                    <span class="profile-meta-item">
                         <i class="bi bi-telephone-fill"></i> {{ $applicant->no_hp_1 }}
                     </span>
                     <span class="profile-meta-item">

@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
             $table->enum('gender', ['Laki-laki', 'Perempuan']);
-            $table->string('umur');
+            $table->integer('umur');
             
             // Data Lamaran
             $table->date('tanggal_lamaran');

@@ -117,22 +117,24 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
-                    <input type="date" class="form-control @error('tanggal_lahir') is-invalid @enderror" 
-                        id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-calendar"></i></span>
+                        <input type="text" 
+                               class="form-control @error('tanggal_lahir') is-invalid @enderror bg-white" 
+                               id="tanggal_lahir" 
+                               name="tanggal_lahir" 
+                               value="{{ old('tanggal_lahir', $applicant->tanggal_lahir ? $applicant->tanggal_lahir->format('Y-m-d') : '') }}" 
+                               placeholder="Pilih Tanggal Lahir"
+                               readonly>
+                    </div>
                     @error('tanggal_lahir')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="umur" class="form-label">Kategori Umur (EEO) <span class="text-danger">*</span></label>
-                    <select class="form-select @error('umur') is-invalid @enderror" id="umur" name="umur" required>
-                        <option value="">-- Pilih Kategori --</option>
-                        @foreach(['0-17', '18-25', '26-35', '36-45', '46-55', '56+'] as $cat)
-                            <option value="{{ $cat }}" {{ (old('umur', $applicant->umur) == $cat) ? 'selected' : '' }}>
-                                {{ $cat }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <label for="umur" class="form-label">Umur <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control @error('umur') is-invalid @enderror" 
+                           id="umur" name="umur" value="{{ old('umur', $applicant->umur ?? '') }}" readonly required>
                     @error('umur')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -355,22 +357,33 @@
 
         togglePklFields(); // Initial state
 
-        // Auto calculate age from birth date
-        const tanggalLahir = document.getElementById('tanggal_lahir');
-        const umur = document.getElementById('umur');
-
-        tanggalLahir.addEventListener('change', function() {
-            if (this.value) {
-                const birthDate = new Date(this.value);
-                const today = new Date();
-                let age = today.getFullYear() - birthDate.getFullYear();
-                const monthDiff = today.getMonth() - birthDate.getMonth();
-                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                    age--;
+        // Flatpickr untuk tanggal lahir & hitung umur otomatis
+        flatpickr("#tanggal_lahir", {
+            dateFormat: "Y-m-d",
+            locale: "id",
+            maxDate: "today",
+            allowInput: true,
+            disableMobile: "true",
+            onChange: function(selectedDates, dateStr, instance) {
+                calculateAge(selectedDates[0]);
+            },
+            onReady: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    calculateAge(selectedDates[0]);
                 }
-                umur.value = age;
             }
         });
+
+        function calculateAge(birthDate) {
+            if (!birthDate) return;
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            document.getElementById('umur').value = age;
+        }
     });
 </script>
 @endpush

@@ -212,7 +212,6 @@ class ImportController extends Controller
                 $applicant->gender = $gender;
                 $applicant->tempat_lahir = $row['birth_place'] ?? null;
                 $applicant->tanggal_lahir = $birthDate;
-                // Tidak perlu simpan umur/EEO Age, biarkan null/abaikan
                 $applicant->umur = null;
 
                 // PKL

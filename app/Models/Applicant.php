@@ -17,6 +17,7 @@ class Applicant extends Model
         'provinsi',
         'no_hp_1',
         'no_hp_2',
+        'email',
         'no_ktp',
         'tempat_lahir',
         'tanggal_lahir',
