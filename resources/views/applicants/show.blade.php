@@ -38,11 +38,9 @@
                 <div class="profile-badges">
                     @if($applicant->is_guru)
                         <span class="profile-badge"><i class="bi bi-mortarboard"></i> Guru</span>
-                    @endif
-                    @if($applicant->is_pkl)
+                    @elseif($applicant->is_pkl)
                         <span class="profile-badge"><i class="bi bi-briefcase"></i> PKL</span>
-                    @endif
-                    @if(!$applicant->is_guru && !$applicant->is_pkl)
+                    @else
                         <span class="profile-badge"><i class="bi bi-person"></i> Reguler</span>
                     @endif
                     <span class="profile-badge">

@@ -82,14 +82,31 @@ class ImportController extends Controller
             return $cleaned ?: null;
         };
 
+        // Helper untuk ambil kolom dengan beberapa kemungkinan nama
+        $findColumn = function($row, $candidates) {
+            foreach ($candidates as $col) {
+                if (isset($row[$col]) && $row[$col] !== '') return $row[$col];
+            }
+            return null;
+        };
+
+        Log::info('--- DEBUG IMPORT APPLICANT ---');
         DB::beginTransaction();
         try {
             foreach ($rows as $row) {
+                Log::info('IMPORT ROW', [
+                    'applicant_number' => $row['applicant_number'] ?? null,
+                    'Nomor KTP' => $row['Nomor KTP'] ?? null,
+                    'no_ktp' => $row['no_ktp'] ?? null,
+                    'ktp' => $row['ktp'] ?? null,
+                    'Tanggal Lahir' => $row['Tanggal Lahir'] ?? null,
+                    'tanggal_lahir' => $row['tanggal_lahir'] ?? null,
+                ]);
                 $appNum = $row['applicant_number'] ?? null;
                 if (!$appNum) continue;
 
                 $fullName = trim(($row['first_name'] ?? '') . ' ' . ($row['middle_name'] ?? '') . ' ' . ($row['last_name'] ?? ''));
-                
+
                 // Sanitasi No HP
                 $noHp1 = $cleanPhone($row['home_phone'] ?? null) ?? '-';
                 $noHp2 = $cleanPhone($row['work_phone'] ?? null);
@@ -105,36 +122,79 @@ class ImportController extends Controller
                     try { $applyDate = \Carbon\Carbon::parse($row['apply_date']); } catch (\Exception $e) {}
                 }
 
-                $noKtp = $row['no_ktp'] ?? '-';
-                
+
+                // Ambil dari kolom Excel yang benar (toleran header)
+                // Cari kolom KTP lebih toleran (case-insensitive, trim)
+                $noKtp = null;
+                foreach ($row as $k => $v) {
+                    if (is_string($k) && preg_match('/ktp|nik/i', $k)) {
+                        $noKtp = trim($v);
+                        break;
+                    }
+                }
+                if (is_string($noKtp)) {
+                    $noKtp = ltrim($noKtp, "' ."); // hapus petik satu, titik, spasi di depan
+                }
+                if (!$noKtp) $noKtp = '-';
+
+                // Tanggal lahir dari kolom yang benar (toleran header)
+                $birthRaw = $findColumn($row, ['Tanggal Lahir', 'tanggal_lahir', 'tgl_lahir', 'dob', 'birthdate']);
+                $birthDate = null;
+                if (!empty($birthRaw)) {
+                    $tgl = $birthRaw;
+                    if (is_numeric($tgl)) {
+                        try {
+                            $birthDate = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($tgl);
+                        } catch (\Exception $e) {
+                            Log::warning('Gagal konversi serial Excel ke tanggal', ['value' => $tgl]);
+                        }
+                    } else {
+                        // Jika sudah DateTime/Carbon, langsung pakai
+                        if ($tgl instanceof \DateTimeInterface) {
+                            $birthDate = \Carbon\Carbon::instance($tgl);
+                        } else {
+                            // Coba beberapa format umum
+                            $formats = ['Y-m-d', 'd/m/Y', 'd-m-Y', 'm/d/Y', 'm-d-Y', 'd M Y', 'd F Y'];
+                            foreach ($formats as $fmt) {
+                                try {
+                                    $birthDate = \Carbon\Carbon::createFromFormat($fmt, (string)$tgl);
+                                    break;
+                                } catch (\Exception $e) {}
+                            }
+                            if (!$birthDate) {
+                                try {
+                                    $birthDate = \Carbon\Carbon::parse((string)$tgl);
+                                } catch (\Exception $e2) {
+                                    Log::warning('Gagal parsing tanggal lahir', ['value' => $tgl]);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // PKL: jika kolom pkl/PKL/Is PKL/PKL Status/PKL_YN isinya 'yes', set is_pkl=true
+                $pklRaw = $findColumn($row, ['pkl', 'PKL', 'is_pkl', 'Is PKL', 'PKL Status', 'PKL_YN']);
+                $isPkl = false;
+                if ($pklRaw !== null && strtolower(trim($pklRaw)) === 'yes') {
+                    $isPkl = true;
+                }
+
+                // Data PKL: periode, asal sekolah, jurusan/tempat boleh kosong
+                $pklAwal = $findColumn($row, ['Awal PKL', 'awal_pkl', 'pkl_awal', 'start_pkl', 'mulai_pkl']);
+                $pklAkhir = $findColumn($row, ['Berakhir PKL', 'berakhir_pkl', 'pkl_akhir', 'end_pkl', 'selesai_pkl']);
+                $pklAsalSekolah = $findColumn($row, ['Asal Sekolah', 'asal_sekolah', 'pkl_asal_sekolah', 'school_pkl']);
+                $pklJurusan = $findColumn($row, ['pkl_jurusan', 'jurusan_pkl', 'jurusan', 'major_pkl']);
+                $pklTempat = $findColumn($row, ['pkl_tempat', 'tempat_pkl', 'tempat', 'place_pkl']);
+
+
                 // Status dari Excel
                 $statusRaw = strtolower(trim($row['status'] ?? ''));
-                $statusExcel = ($statusRaw == 'hired' || $statusRaw == 'accepted') ? 'accepted' : 
+                $statusExcel = ($statusRaw == 'hired' || $statusRaw == 'accepted') ? 'accepted' :
                                (($statusRaw == 'reject' || $statusRaw == 'rejected') ? 'rejected' : 'pending');
 
                 $colorRaw = strtolower(trim($row['color_string'] ?? $row['color_code'] ?? ''));
                 $colorMap = ['red'=>'merah', 'yellow'=>'kuning', 'blue'=>'biru', 'green'=>'hijau', 'black'=>'hitam'];
                 $colorCode = $colorMap[$colorRaw] ?? null;
-
-                // --- EEO AGE LOGIC ---
-                $eeoCategory = $row['eeo_age'] ?? null;
-                $birthDate = null;
-                if (!empty($row['date_of_birth'])) { 
-                    try { 
-                        $birthDate = \Carbon\Carbon::parse($row['date_of_birth']); 
-                        if (empty($eeoCategory)) {
-                            $age = $birthDate->age;
-                            if ($age <= 17) $eeoCategory = "0-17";
-                            elseif ($age <= 25) $eeoCategory = "18-25";
-                            elseif ($age <= 35) $eeoCategory = "26-35";
-                            elseif ($age <= 45) $eeoCategory = "36-45";
-                            elseif ($age <= 55) $eeoCategory = "46-55";
-                            else $eeoCategory = "56+";
-                        }
-                    } catch (\Exception $e) {}
-                }
-                if (empty($eeoCategory)) $eeoCategory = '18-25';
-                // ---------------------
 
                 $applicant = Applicant::firstOrNew(['applicant_number' => $appNum]);
 
@@ -147,11 +207,21 @@ class ImportController extends Controller
                 $applicant->provinsi = $row['state'] ?? '-';
                 $applicant->no_hp_1 = $noHp1;
                 $applicant->no_hp_2 = $noHp2;
+
                 $applicant->color_code = $colorCode;
                 $applicant->gender = $gender;
                 $applicant->tempat_lahir = $row['birth_place'] ?? null;
                 $applicant->tanggal_lahir = $birthDate;
-                $applicant->umur = $eeoCategory;
+                // Tidak perlu simpan umur/EEO Age, biarkan null/abaikan
+                $applicant->umur = null;
+
+                // PKL
+                $applicant->is_pkl = $isPkl;
+                $applicant->pkl_awal = $pklAwal ? (\Carbon\Carbon::parse($pklAwal)) : null;
+                $applicant->pkl_akhir = $pklAkhir ? (\Carbon\Carbon::parse($pklAkhir)) : null;
+                $applicant->pkl_asal_sekolah = $pklAsalSekolah;
+                $applicant->pkl_jurusan = $pklJurusan;
+                $applicant->pkl_tempat = $pklTempat;
 
                 // 2. Cek apakah ini Data Baru atau Update
                 if (!$applicant->exists) {

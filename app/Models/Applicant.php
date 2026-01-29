@@ -21,7 +21,6 @@ class Applicant extends Model
         'tempat_lahir',
         'tanggal_lahir',
         'gender',
-        'umur',
         'tanggal_lamaran',
         'tanggal_test',
         'nama_sekolah',
@@ -78,23 +77,23 @@ class Applicant extends Model
         return '-';
     }
 
-    // /**
-    //  * Get dynamic age (umur) based on tanggal_lahir dan hari sekarang
-    //  */
-    // public function getUmurAttribute()
-    // {
-    //     if (!$this->tanggal_lahir) return null;
-    //     $today = now();
-    //     $birthDate = $this->tanggal_lahir;
-    //     $age = $today->year - $birthDate->year;
-    //     if (
-    //         $today->month < $birthDate->month ||
-    //         ($today->month == $birthDate->month && $today->day < $birthDate->day)
-    //     ) {
-    //         $age--;
-    //     }
-    //     return $age;
-    // }
+    /**
+     * Get dynamic age (umur) based on tanggal_lahir dan hari sekarang
+     */
+    public function getUmurAttribute()
+    {
+        if (!$this->tanggal_lahir) return null;
+        $today = now();
+        $birthDate = $this->tanggal_lahir;
+        $age = $today->year - $birthDate->year;
+        if (
+            $today->month < $birthDate->month ||
+            ($today->month == $birthDate->month && $today->day < $birthDate->day)
+        ) {
+            $age--;
+        }
+        return $age;
+    }
 
     /**
      * Get pendidikan info
