@@ -17,7 +17,6 @@ class PsikotestReport extends Model
         'iq_category',
         'result',
         'kesimpulan_saran',
-        // Tambahkan semua kolom lain yang diisi secara massal jika perlu
         'kemampuan_memecahkan_masalah',
         'ruang_lingkup_pengetahuan',
         'kemampuan_berfikir_analitis',
@@ -69,78 +68,91 @@ class PsikotestReport extends Model
      */
     public static function calculateScores(array $data, string $reportType = '34')
     {
-        // Calculate XA Score (Aspek A) - same for both types
+       // 1. Aspek A (XA) - Selalu 7 Soal
         $aspekA = [
-            $data['kemampuan_memecahkan_masalah'] ?? null,
-            $data['ruang_lingkup_pengetahuan'] ?? null,
-            $data['kemampuan_berfikir_analitis'] ?? null,
-            $data['kemampuan_bekerja_dengan_angka'] ?? null,
-            $data['kemampuan_berfikir_logis'] ?? null,
-            $data['kemampuan_berfikir_abstrak'] ?? null,
-            $data['kemampuan_mengingat'] ?? null,
+            $data['kemampuan_memecahkan_masalah'] ?? 0,
+            $data['ruang_lingkup_pengetahuan'] ?? 0,
+            $data['kemampuan_berfikir_analitis'] ?? 0,
+            $data['kemampuan_bekerja_dengan_angka'] ?? 0,
+            $data['kemampuan_berfikir_logis'] ?? 0,
+            $data['kemampuan_berfikir_abstrak'] ?? 0,
+            $data['kemampuan_mengingat'] ?? 0,
         ];
-        $data['xa_score'] = self::calculateAverage($aspekA);
+        // Rumus: Total Nilai / 7
+        $data['xa_score'] = self::calculateFixedAverage($aspekA, 7);
 
-        // Calculate XB Score (Aspek B) - different based on report type
+        // 2. Aspek B (XB) - Tergantung Tipe
         if ($reportType === '34') {
             $aspekB = [
-                $data['kecepatan_dalam_bekerja'] ?? null,
-                $data['ketelitian_dalam_bekerja'] ?? null,
-                $data['kestabilan_dalam_bekerja'] ?? null,
-                $data['ketahanan_kerja'] ?? null,
-                $data['kemampuan_konsentrasi_persepsi'] ?? null,
-                $data['kemampuan_berhitung'] ?? null,
-                $data['kemampuan_mengemukakan_pendapat'] ?? null,
-                $data['kemampuan_penalaran_non_verbal'] ?? null,
-                $data['kemampuan_membaca_memahami_logis'] ?? null,
-                $data['kemampuan_administrasi_kompleks'] ?? null,
-                $data['sistematika_dalam_bekerja'] ?? null,
+                $data['kecepatan_dalam_bekerja'] ?? 0,
+                $data['ketelitian_dalam_bekerja'] ?? 0,
+                $data['kestabilan_dalam_bekerja'] ?? 0,
+                $data['ketahanan_kerja'] ?? 0,
+                $data['kemampuan_konsentrasi_persepsi'] ?? 0,
+                $data['kemampuan_berhitung'] ?? 0,
+                $data['kemampuan_mengemukakan_pendapat'] ?? 0,
+                $data['kemampuan_penalaran_non_verbal'] ?? 0,
+                $data['kemampuan_membaca_memahami_logis'] ?? 0,
+                $data['kemampuan_administrasi_kompleks'] ?? 0,
+                $data['sistematika_dalam_bekerja'] ?? 0,
             ];
+            // Rumus XB Tipe 34: Total Nilai / 11
+            $divisorB = 11;
         } else {
+            // Tipe 38
             $aspekB = [
-                $data['kecepatan_dalam_bekerja'] ?? null,
-                $data['ketelitian_dalam_bekerja'] ?? null,
-                $data['kestabilan_dalam_bekerja'] ?? null,
-                $data['ketahanan_kerja'] ?? null,
-                $data['kemampuan_konsentrasi_persepsi'] ?? null,
-                $data['kemampuan_mengemukakan_pendapat'] ?? null,
-                $data['kemampuan_penalaran_non_verbal'] ?? null,
-                $data['persepsi_ruang_bidang'] ?? null,
-                $data['kemampuan_dasar_mekanik'] ?? null,
-                $data['kemampuan_mengidentifikasi_komponen'] ?? null,
-                $data['kemampuan_bekerja_dengan_angka_computational'] ?? null,
-                $data['kemampuan_penalaran_mekanik'] ?? null,
-                $data['kemampuan_membaca_memahami_logis'] ?? null,
-                $data['kemampuan_merakit_objek'] ?? null,
-                $data['sistematika_dalam_bekerja'] ?? null,
+                $data['kecepatan_dalam_bekerja'] ?? 0,
+                $data['ketelitian_dalam_bekerja'] ?? 0,
+                $data['kestabilan_dalam_bekerja'] ?? 0,
+                $data['ketahanan_kerja'] ?? 0,
+                $data['kemampuan_konsentrasi_persepsi'] ?? 0,
+                $data['kemampuan_mengemukakan_pendapat'] ?? 0,
+                $data['kemampuan_penalaran_non_verbal'] ?? 0,
+                $data['persepsi_ruang_bidang'] ?? 0,
+                $data['kemampuan_dasar_mekanik'] ?? 0,
+                $data['kemampuan_mengidentifikasi_komponen'] ?? 0,
+                $data['kemampuan_bekerja_dengan_angka_computational'] ?? 0,
+                $data['kemampuan_penalaran_mekanik'] ?? 0,
+                $data['kemampuan_membaca_memahami_logis'] ?? 0,
+                $data['kemampuan_merakit_objek'] ?? 0,
+                $data['sistematika_dalam_bekerja'] ?? 0,
             ];
+            // Rumus XB Tipe 38: Total Nilai / 15
+            $divisorB = 15;
         }
-        $data['xb_score'] = self::calculateAverage($aspekB);
+        $data['xb_score'] = self::calculateFixedAverage($aspekB, $divisorB);
 
-        // Calculate XC Score (Aspek C) - same fields for both types
+        // 3. Aspek C (XC) - Selalu 16 Soal
         $aspekC = [
-            $data['motivasi'] ?? null,
-            $data['kemampuan_membuat_keputusan'] ?? null,
-            $data['kemampuan_kerja_sama_kelompok'] ?? null,
-            $data['kemampuan_menjadi_pemimpin'] ?? null,
-            $data['kemampuan_berfikir_positif'] ?? null,
-            $data['ketekunan_dalam_bekerja'] ?? null,
-            $data['kejujuran_berpendapat'] ?? null,
-            $data['tanggung_jawab_dalam_bekerja'] ?? null,
-            $data['motif_dalam_berprestasi'] ?? null,
-            $data['afiliasi'] ?? null,
-            $data['motif_menolong_orang_lain'] ?? null,
-            $data['kestabilan_emosi'] ?? null,
-            $data['kematangan_sosial'] ?? null,
-            $data['rasa_percaya_diri'] ?? null,
-            $data['penyesuaian_diri'] ?? null,
-            $data['kejujuran_dalam_bekerja'] ?? null,
+            $data['motivasi'] ?? 0,
+            $data['kemampuan_membuat_keputusan'] ?? 0,
+            $data['kemampuan_kerja_sama_kelompok'] ?? 0,
+            $data['kemampuan_menjadi_pemimpin'] ?? 0,
+            $data['kemampuan_berfikir_positif'] ?? 0,
+            $data['ketekunan_dalam_bekerja'] ?? 0,
+            $data['kejujuran_berpendapat'] ?? 0,
+            $data['tanggung_jawab_dalam_bekerja'] ?? 0,
+            $data['motif_dalam_berprestasi'] ?? 0,
+            $data['afiliasi'] ?? 0,
+            $data['motif_menolong_orang_lain'] ?? 0,
+            $data['kestabilan_emosi'] ?? 0,
+            $data['kematangan_sosial'] ?? 0,
+            $data['rasa_percaya_diri'] ?? 0,
+            $data['penyesuaian_diri'] ?? 0,
+            $data['kejujuran_dalam_bekerja'] ?? 0,
         ];
-        $data['xc_score'] = self::calculateAverage($aspekC);
+        // Rumus: Total Nilai / 16
+        $data['xc_score'] = self::calculateFixedAverage($aspekC, 16);
 
-        // Calculate XT Score (Total)
+        // 4. Aspek Total (XT)
+        // Hitung total item keseluruhan: 7 + (11 atau 15) + 16
+        $totalItems = 7 + $divisorB + 16; 
+        
+        // Gabungkan semua nilai
         $allScores = array_merge($aspekA, $aspekB, $aspekC);
-        $data['xt_score'] = self::calculateAverage($allScores);
+        
+        // Rumus XT: Total Seluruh Nilai / Total Jumlah Soal (34 atau 38)
+        $data['xt_score'] = self::calculateFixedAverage($allScores, $totalItems);
 
         return $data;
     }
@@ -148,20 +160,19 @@ class PsikotestReport extends Model
     /**
      * Calculate average of non-null values (static, reusable).
      */
-    public static function calculateAverage(array $values)
+    public static function calculateAverage(array $values, int $divisor)
     {
-        // N/A (null/kosong) dihitung 0, pembagi tetap total soal
-        $total = count($values);
-        if ($total === 0) return null;
+        if ($divisor <= 0) return 0;
+
         $sum = 0;
         foreach ($values as $v) {
-            if ($v === null || $v === '' || $v === 'N/A') {
-                $sum += 0;
-            } else {
-                $sum += floatval($v);
-            }
+            // Pastikan nilai numerik, null/empty string dianggap 0
+            $val = floatval($v); 
+            $sum += $val;
         }
-        return round($sum / $total, 2);
+
+        // Pembagian langsung dengan fixed divisor
+        return round($sum / $divisor, 2);
     }
 
     protected $casts = [
