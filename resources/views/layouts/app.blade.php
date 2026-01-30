@@ -60,6 +60,14 @@
                         <span class="sidebar-menu-text">Export Excel</span>
                     </a>
                 </li>
+                <li class="sidebar-menu-item">
+                    <a href="{{ route('applicants.report') }}" class="sidebar-menu-link {{ request()->routeIs('applicants.report') ? 'active' : '' }}" title="Reporting View">
+                        <span class="sidebar-menu-icon">
+                            <i class="bi bi-table"></i>
+                        </span>
+                        <span class="sidebar-menu-text">Reporting View</span>
+                    </a>
+                </li>
             </ul>
         </nav>
 
