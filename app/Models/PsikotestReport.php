@@ -141,7 +141,6 @@ class PsikotestReport extends Model
             $data['penyesuaian_diri'] ?? 0,
             $data['kejujuran_dalam_bekerja'] ?? 0,
         ];
-        // Rumus: Total Nilai / 16
         $data['xc_score'] = self::calculateFixedAverage($aspekC, 16);
 
         // 4. Aspek Total (XT)
@@ -152,7 +151,7 @@ class PsikotestReport extends Model
         $allScores = array_merge($aspekA, $aspekB, $aspekC);
         
         // Rumus XT: Total Seluruh Nilai / Total Jumlah Soal (34 atau 38)
-        $data['xt_score'] = self::calculateFixedAverage($allScores, $totalItems);
+        $data['xt_score'] = self::calculateAverage($allScores, $totalItems);
 
         return $data;
     }

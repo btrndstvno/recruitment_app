@@ -38,11 +38,10 @@ class PsikotestReportController extends Controller
         $validated['applicant_id'] = $applicant->id;
         $validated['report_type'] = $reportType;
 
-        // Sinkronisasi tanggal_test
+        // Sinkronisasi tanggal_test dengan data applicant
         if (empty($applicant->tanggal_test)) {
-            // Jika applicant belum punya tanggal_test, ambil dari input laporan psikotest
+            // Jika applicant belum punya tanggal_test, ambil dari input
             $validated['tanggal_test'] = $request->input('tanggal_test');
-            // Simpan ke applicant juga
             $applicant->update([
                 'tanggal_test' => $validated['tanggal_test'],
                 'status' => 'tested',
@@ -50,14 +49,13 @@ class PsikotestReportController extends Controller
         } else {
             // Jika sudah ada, gunakan tanggal_test dari applicant
             $validated['tanggal_test'] = $applicant->tanggal_test;
-            // Pastikan status tested
             if ($applicant->status !== 'tested') {
                 $applicant->update(['status' => 'tested']);
             }
         }
 
-        // Calculate scores based on report type
-        $validated = $this->calculateScores($validated, $reportType);
+        // Menggunakan method static di Model untuk memastikan pembagi tetap (Fixed Divisor)
+        $validated = PsikotestReport::calculateScores($validated, $reportType);
 
         PsikotestReport::create($validated);
 
@@ -83,12 +81,12 @@ class PsikotestReportController extends Controller
             $reportType = '34';
         }
 
-        // Untuk aspek B, siapkan field sesuai tipe
+        // Untuk aspek B, siapkan field sesuai tipe (mengambil helper dari Model)
         $aspekBFields = $reportType == '38'
             ? \App\Models\PsikotestReport::getAspekBFields38()
             : \App\Models\PsikotestReport::getAspekBFields();
 
-        // Untuk aspek C, siapkan field sesuai tipe
+        // Untuk aspek C, siapkan field sesuai tipe (mengambil helper dari Model)
         $aspekCFields = $reportType == '38'
             ? \App\Models\PsikotestReport::getAspekCFields38()
             : \App\Models\PsikotestReport::getAspekCFields();
@@ -107,7 +105,7 @@ class PsikotestReportController extends Controller
             return redirect()->route('psikotest.create', $applicant);
         }
 
-        // Ambil tipe dari request, default ke tipe lama
+        // Ambil tipe dari request form (hidden input) atau fallback ke database
         $reportType = $request->input('report_type', $report->report_type ?? '34');
         if (!in_array($reportType, ['34', '38'])) {
             $reportType = '34';
@@ -130,8 +128,8 @@ class PsikotestReportController extends Controller
             }
         }
 
-        // Calculate scores based on report type
-        $validated = $this->calculateScores($validated, $reportType);
+        // PENGHITUNGAN SKOR (Perbaikan):
+        $validated = PsikotestReport::calculateScores($validated, $reportType);
 
         $report->update($validated);
 
@@ -160,7 +158,6 @@ class PsikotestReportController extends Controller
     private function validateReport(Request $request, string $reportType = '34')
     {
         $rules = [
-            // 'tanggal_test' => 'required|date', // diambil dari applicant, tidak perlu validasi di sini
             'iq_score' => 'nullable|integer|min:50|max:200',
             'iq_category' => 'nullable|in:borderline,dibawah_rata_rata,rata_rata,diatas_rata_rata,superior,very_superior',
             // A. Kemampuan Intelektual Umum
@@ -216,99 +213,5 @@ class PsikotestReportController extends Controller
         }
 
         return $request->validate($rules);
-    }
-
-    /**
-     * Calculate average scores for each section.
-     */
-    private function calculateScores(array $data, string $reportType = '34')
-    {
-        // Calculate XA Score (Aspek A) - same for both types
-        $aspekA = [
-            $data['kemampuan_memecahkan_masalah'] ?? null,
-            $data['ruang_lingkup_pengetahuan'] ?? null,
-            $data['kemampuan_berfikir_analitis'] ?? null,
-            $data['kemampuan_bekerja_dengan_angka'] ?? null,
-            $data['kemampuan_berfikir_logis'] ?? null,
-            $data['kemampuan_berfikir_abstrak'] ?? null,
-            $data['kemampuan_mengingat'] ?? null,
-        ];
-        $data['xa_score'] = $this->calculateAverage($aspekA);
-
-        // Calculate XB Score (Aspek B) - different based on report type
-        if ($reportType === '34') {
-            $aspekB = [
-                $data['kecepatan_dalam_bekerja'] ?? null,
-                $data['ketelitian_dalam_bekerja'] ?? null,
-                $data['kestabilan_dalam_bekerja'] ?? null,
-                $data['ketahanan_kerja'] ?? null,
-                $data['kemampuan_konsentrasi_persepsi'] ?? null,
-                $data['kemampuan_berhitung'] ?? null,
-                $data['kemampuan_mengemukakan_pendapat'] ?? null,
-                $data['kemampuan_penalaran_non_verbal'] ?? null,
-                $data['kemampuan_membaca_memahami_logis'] ?? null,
-                $data['kemampuan_administrasi_kompleks'] ?? null,
-                $data['sistematika_dalam_bekerja'] ?? null,
-            ];
-        } else {
-            $aspekB = [
-                $data['kecepatan_dalam_bekerja'] ?? null,
-                $data['ketelitian_dalam_bekerja'] ?? null,
-                $data['kestabilan_dalam_bekerja'] ?? null,
-                $data['ketahanan_kerja'] ?? null,
-                $data['kemampuan_konsentrasi_persepsi'] ?? null,
-                $data['kemampuan_mengemukakan_pendapat'] ?? null,
-                $data['kemampuan_penalaran_non_verbal'] ?? null,
-                $data['persepsi_ruang_bidang'] ?? null,
-                $data['kemampuan_dasar_mekanik'] ?? null,
-                $data['kemampuan_mengidentifikasi_komponen'] ?? null,
-                $data['kemampuan_bekerja_dengan_angka_computational'] ?? null,
-                $data['kemampuan_penalaran_mekanik'] ?? null,
-                $data['kemampuan_membaca_memahami_logis'] ?? null,
-                $data['kemampuan_merakit_objek'] ?? null,
-                $data['sistematika_dalam_bekerja'] ?? null,
-            ];
-        }
-        $data['xb_score'] = $this->calculateAverage($aspekB);
-
-        // Calculate XC Score (Aspek C) - same fields for both types
-        $aspekC = [
-            $data['motivasi'] ?? null,
-            $data['kemampuan_membuat_keputusan'] ?? null,
-            $data['kemampuan_kerja_sama_kelompok'] ?? null,
-            $data['kemampuan_menjadi_pemimpin'] ?? null,
-            $data['kemampuan_berfikir_positif'] ?? null,
-            $data['ketekunan_dalam_bekerja'] ?? null,
-            $data['kejujuran_berpendapat'] ?? null,
-            $data['tanggung_jawab_dalam_bekerja'] ?? null,
-            $data['motif_dalam_berprestasi'] ?? null,
-            $data['afiliasi'] ?? null,
-            $data['motif_menolong_orang_lain'] ?? null,
-            $data['kestabilan_emosi'] ?? null,
-            $data['kematangan_sosial'] ?? null,
-            $data['rasa_percaya_diri'] ?? null,
-            $data['penyesuaian_diri'] ?? null,
-            $data['kejujuran_dalam_bekerja'] ?? null,
-        ];
-        $data['xc_score'] = $this->calculateAverage($aspekC);
-
-        // Calculate XT Score (Total)
-        $allScores = array_merge($aspekA, $aspekB, $aspekC);
-        $data['xt_score'] = $this->calculateAverage($allScores);
-
-        return $data;
-    }
-
-    /**
-     * Calculate average of non-null values.
-     */
-    private function calculateAverage(array $values)
-    {
-        // Filter out null, empty string, and 0 values (only count valid 1-5 scores)
-        $filtered = array_filter($values, fn($v) => $v !== null && $v !== '' && $v > 0);
-        if (count($filtered) === 0) {
-            return null;
-        }
-        return round(array_sum($filtered) / count($filtered), 2);
     }
 }
