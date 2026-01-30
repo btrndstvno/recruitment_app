@@ -199,7 +199,6 @@
 
 {{-- Data Table Container --}}
 <div class="card fade-in-up" style="animation-delay: 0.3s">
-    {{-- PERBAIKAN UTAMA: Tambahkan ID ini agar AJAX tahu dimana harus mengganti tabel --}}
     <div class="card-body p-0" id="applicant-list-container">
         @include('applicants._list')
     </div>
