@@ -277,10 +277,23 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const reportType = '{{ $reportType }}';
     const aspekAFields = @json(array_keys(\App\Models\PsikotestReport::getAspekAFields()));
-    const aspekBFields = @json(array_keys(\App\Models\PsikotestReport::getAspekBFields()));
-    const aspekCFields = @json(array_keys(\App\Models\PsikotestReport::getAspekCFields()));
+    const aspekBFields = reportType === '38' 
+        ? @json(array_keys(\App\Models\PsikotestReport::getAspekBFields38()))
+        : @json(array_keys(\App\Models\PsikotestReport::getAspekBFields()));
+    const aspekCFields = reportType === '38'
+        ? @json(array_keys(\App\Models\PsikotestReport::getAspekCFields38()))
+        : @json(array_keys(\App\Models\PsikotestReport::getAspekCFields()));
+    
+    // Pembagi tetap berdasarkan tipe soal
+    const divisorA = 7;
+    const divisorB = reportType === '38' ? 15 : 11;
+    const divisorC = 16;
+    const divisorTotal = reportType === '38' ? 38 : 34;
 
+    // Fungsi untuk menghitung rata-rata (hanya soal yang diisi)
+    // N/A tidak dihitung sama sekali - baik di pembilang maupun pembagi
     function calculateAverage(fields) {
         let sum = 0;
         let count = 0;
@@ -295,6 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateScores() {
+        // Hitung rata-rata (hanya soal yang diisi)
         const xa = calculateAverage(aspekAFields);
         const xb = calculateAverage(aspekBFields);
         const xc = calculateAverage(aspekCFields);
@@ -303,9 +317,19 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('xb_display').textContent = xb;
         document.getElementById('xc_display').textContent = xc;
 
-        // Calculate total
-        const allFields = [...aspekAFields, ...aspekBFields, ...aspekCFields];
-        const xt = calculateAverage(allFields);
+        // Calculate XT = (XA + XB + XC) / 3
+        const xaNum = parseFloat(xa) || 0;
+        const xbNum = parseFloat(xb) || 0;
+        const xcNum = parseFloat(xc) || 0;
+        
+        // Hitung berapa aspek yang punya nilai
+        let aspectCount = 0;
+        let aspectSum = 0;
+        if (xaNum > 0) { aspectSum += xaNum; aspectCount++; }
+        if (xbNum > 0) { aspectSum += xbNum; aspectCount++; }
+        if (xcNum > 0) { aspectSum += xcNum; aspectCount++; }
+        
+        const xt = aspectCount > 0 ? (aspectSum / aspectCount).toFixed(2) : '-';
         document.getElementById('xt_display').textContent = xt;
     }
 

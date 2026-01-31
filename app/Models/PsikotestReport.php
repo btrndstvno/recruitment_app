@@ -143,35 +143,52 @@ class PsikotestReport extends Model
         ];
         $data['xc_score'] = self::calculateFixedAverage($aspekC, 16);
 
-        // 4. Aspek Total (XT)
-        // Hitung total item keseluruhan: 7 + (11 atau 15) + 16
-        $totalItems = 7 + $divisorB + 16; 
+        // 4. Aspek Total (XT) = (XA + XB + XC) / 3
+        $xaScore = floatval($data['xa_score']);
+        $xbScore = floatval($data['xb_score']);
+        $xcScore = floatval($data['xc_score']);
         
-        // Gabungkan semua nilai
-        $allScores = array_merge($aspekA, $aspekB, $aspekC);
+        // Hitung berapa aspek yang punya nilai
+        $aspectSum = 0;
+        $aspectCount = 0;
+        if ($xaScore > 0) { $aspectSum += $xaScore; $aspectCount++; }
+        if ($xbScore > 0) { $aspectSum += $xbScore; $aspectCount++; }
+        if ($xcScore > 0) { $aspectSum += $xcScore; $aspectCount++; }
         
-        // Rumus XT: Total Seluruh Nilai / Total Jumlah Soal (34 atau 38)
-        $data['xt_score'] = self::calculateAverage($allScores, $totalItems);
+        $data['xt_score'] = $aspectCount > 0 ? round($aspectSum / $aspectCount, 2) : 0;
 
         return $data;
     }
 
     /**
-     * Calculate average of non-null values (static, reusable).
+     * Calculate average with dynamic divisor (static, reusable).
+     * Only counts non-null, non-zero values. N/A is not counted.
      */
-    public static function calculateAverage(array $values, int $divisor)
+    public static function calculateFixedAverage(array $values, int $ignoredDivisor = 0)
     {
-        if ($divisor <= 0) return 0;
+        return self::calculateAverage($values);
+    }
 
+    /**
+     * Calculate average of non-null values (static, reusable).
+     * N/A (null or 0) is not counted - both in sum and divisor.
+     */
+    public static function calculateAverage(array $values, int $ignoredDivisor = 0)
+    {
         $sum = 0;
+        $count = 0;
+        
         foreach ($values as $v) {
             // Pastikan nilai numerik, null/empty string dianggap 0
-            $val = floatval($v); 
-            $sum += $val;
+            $val = floatval($v);
+            if ($val > 0) {
+                $sum += $val;
+                $count++;
+            }
         }
 
-        // Pembagian langsung dengan fixed divisor
-        return round($sum / $divisor, 2);
+        // Pembagian dengan jumlah soal yang terisi saja
+        return $count > 0 ? round($sum / $count, 2) : 0;
     }
 
     protected $casts = [
