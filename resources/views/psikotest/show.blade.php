@@ -4,9 +4,6 @@
 
 @push('styles')
 <style>
-    .aspek-table th, .aspek-table td { text-align: center; vertical-align: middle; }
-    .aspek-table td:first-child { text-align: left; }
-    .section-score { background-color: #e9ecef; font-weight: bold; }
     @media print {
         @page {
             size: 215mm 330mm;
@@ -138,11 +135,25 @@
             </div>
 
             {{-- Aspek Psikologis Table --}}
+            @php
+                $reportType = $report->report_type ?? '34';
+                $aspekAFields = \App\Models\PsikotestReport::getAspekAFields();
+                $aspekBFields = $reportType == '38'
+                    ? \App\Models\PsikotestReport::getAspekBFields38()
+                    : \App\Models\PsikotestReport::getAspekBFields();
+                $aspekCFields = $reportType == '38'
+                    ? \App\Models\PsikotestReport::getAspekCFields38()
+                    : \App\Models\PsikotestReport::getAspekCFields();
+                $aspekACount = count($aspekAFields);
+                $aspekBCount = count($aspekBFields);
+                $aspekCCount = count($aspekCFields);
+            @endphp
             <div class="table-responsive">
                 <table class="table table-bordered aspek-table">
                     <thead class="table-light">
                         <tr>
-                            <th width="50%">ASPEK PSIKOLOGIS</th>
+                            <th width="15%"></th>
+                            <th width="35%">ASPEK PSIKOLOGIS</th>
                             <th width="8%">A<br><small>1</small></th>
                             <th width="8%">B<br><small>2</small></th>
                             <th width="8%">C<br><small>3</small></th>
@@ -153,97 +164,68 @@
                     </thead>
                     <tbody>
                         {{-- A. Kemampuan Intelektual Umum --}}
-                        <tr class="table-secondary">
-                            <td colspan="7"><strong>A. Kemampuan Intelektual Umum</strong></td>
-                        </tr>
-                        @foreach(\App\Models\PsikotestReport::getAspekAFields() as $field => $label)
+                        @php $first = true; @endphp
+                        @foreach($aspekAFields as $field => $label)
                         <tr>
+                            @if($first)
+                            <td rowspan="{{ $aspekACount }}" class="section-label">A. Kemampuan<br>Intelektual Umum</td>
+                            @php $first = false; @endphp
+                            @endif
                             <td>{{ $label }}</td>
                             @for($i = 1; $i <= 5; $i++)
-                            <td>
-                                @if($report->$field == $i)
-                                    X
-                                @endif
-                            </td>
+                            <td>@if($report->$field == $i) X @endif</td>
                             @endfor
-                            <td>
-                                @if($report->$field === null)
-                                    X
-                                @endif
-                            </td>
+                            <td>@if($report->$field === null) X @endif</td>
                         </tr>
                         @endforeach
                         <tr class="section-score">
-                            <td colspan="6" class="text-end">XA (Rata-rata Aspek A)</td>
+                            <td colspan="7" class="text-end">XA (Rata-rata Aspek A)</td>
                             <td class="text-center"><strong>{{ $report->xa_score ?? '-' }}</strong></td>
                         </tr>
 
                         {{-- B. Kemampuan Khusus --}}
-                        <tr class="table-secondary">
-                            <td colspan="7"><strong>B. Kemampuan Khusus</strong></td>
-                        </tr>
-                        @php
-                            $reportType = $report->report_type ?? '34';
-                            $aspekBFields = $reportType == '38'
-                                ? \App\Models\PsikotestReport::getAspekBFields38()
-                                : \App\Models\PsikotestReport::getAspekBFields();
-                        @endphp
+                        @php $first = true; @endphp
                         @foreach($aspekBFields as $field => $label)
                         <tr>
+                            @if($first)
+                            <td rowspan="{{ $aspekBCount }}" class="section-label">B. Kemampuan<br>Khusus</td>
+                            @php $first = false; @endphp
+                            @endif
                             <td>{{ $label }}</td>
                             @for($i = 1; $i <= 5; $i++)
-                            <td>
-                                @if($report->$field == $i)
-                                    X
-                                @endif
-                            </td>
+                            <td>@if($report->$field == $i) X @endif</td>
                             @endfor
-                            <td>
-                                @if($report->$field === null)
-                                    X
-                                @endif
-                            </td>
+                            <td>@if($report->$field === null) X @endif</td>
                         </tr>
                         @endforeach
                         <tr class="section-score">
-                            <td colspan="6" class="text-end">XB (Rata-rata Aspek B)</td>
+                            <td colspan="7" class="text-end">XB (Rata-rata Aspek B)</td>
                             <td class="text-center"><strong>{{ $report->xb_score ?? '-' }}</strong></td>
                         </tr>
 
                         {{-- C. Kepribadian Dan Sikap Kerja --}}
-                        <tr class="table-secondary">
-                            <td colspan="7"><strong>C. Kepribadian Dan Sikap Kerja</strong></td>
-                        </tr>
-                        @php
-                            $aspekCFields = $reportType == '38'
-                                ? \App\Models\PsikotestReport::getAspekCFields38()
-                                : \App\Models\PsikotestReport::getAspekCFields();
-                        @endphp
+                        @php $first = true; @endphp
                         @foreach($aspekCFields as $field => $label)
                         <tr>
+                            @if($first)
+                            <td rowspan="{{ $aspekCCount }}" class="section-label">C. Kepribadian Dan<br>Sikap Kerja</td>
+                            @php $first = false; @endphp
+                            @endif
                             <td>{{ $label }}</td>
                             @for($i = 1; $i <= 5; $i++)
-                            <td>
-                                @if($report->$field == $i)
-                                    X
-                                @endif
-                            </td>
+                            <td>@if($report->$field == $i) X @endif</td>
                             @endfor
-                            <td>
-                                @if($report->$field === null)
-                                    X
-                                @endif
-                            </td>
+                            <td>@if($report->$field === null) X @endif</td>
                         </tr>
                         @endforeach
                         <tr class="section-score">
-                            <td colspan="6" class="text-end">XC (Rata-rata Aspek C)</td>
+                            <td colspan="7" class="text-end">XC (Rata-rata Aspek C)</td>
                             <td class="text-center"><strong>{{ $report->xc_score ?? '-' }}</strong></td>
                         </tr>
 
                         {{-- Total Score --}}
                         <tr class="table-dark">
-                            <td colspan="6" class="text-end"><strong>XT (TOTAL)</strong></td>
+                            <td colspan="7" class="text-end"><strong>XT (TOTAL)</strong></td>
                             <td class="text-center"><strong>{{ $report->xt_score ?? '-' }}</strong></td>
                         </tr>
                     </tbody>

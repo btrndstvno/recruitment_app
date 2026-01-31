@@ -377,3 +377,30 @@
         font-size: var(--font-size-sm);
     }
 }
+
+/* ============================================
+   PSIKOTEST REPORT - ASPEK TABLE
+   ============================================ */
+.aspek-table th,
+.aspek-table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.aspek-table td:first-child,
+.aspek-table td:nth-child(2) {
+    text-align: left;
+}
+
+.aspek-table .section-label {
+    vertical-align: middle;
+    font-weight: bold;
+    font-size: 9px;
+    background-color: #f8f9fa;
+}
+
+.aspek-table .section-score {
+    background-color: #e9ecef;
+    font-weight: bold;
+}
+
