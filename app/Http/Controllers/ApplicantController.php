@@ -49,7 +49,7 @@ class ApplicantController extends Controller
         elseif ($request->filled('bulan')) $query->whereMonth($tanggalField, $request->bulan);
         elseif ($request->filled('tahun')) $query->whereYear($tanggalField, $request->tahun);
 
-        $query->orderBy('created_at', 'desc');
+        $query->orderByRaw('BINARY nama_lengkap ASC');
         // Search by ID or Nama saja (jika ada input search)
         if ($request->filled('simple_search')) {
             $search = $request->simple_search;
