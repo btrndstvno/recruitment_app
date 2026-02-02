@@ -6,7 +6,7 @@
 <style>
     /* Web view styles */
     .section-label {
-        font-size: 12px;
+        font-size: 16px;
         font-weight: 600;
         vertical-align: middle;
     }
@@ -46,8 +46,9 @@
         .p-3 { padding: 5px !important; }
         .alert { display: none !important; }
         .row { margin: 0 !important; }
-        .table-borderless th, .table-borderless td { padding: 1px 0 !important; }
-        .keterangan-skala { font-size: 8px !important; margin: 2px 0 !important; }
+        .table-borderless th, .table-borderless td { padding: 2.5px 0 !important; }
+        .keterangan-skala { font-size: 8px !important; margin: 4px 0 !important; }
+        .keterangan-skala table td { padding-right: 12px !important; padding-top: 2px !important; }
         .page-one-content { page-break-inside: avoid; }
         .kesimpulan-box {
             padding: 10px !important;
@@ -55,6 +56,8 @@
             min-height: 80px !important;
             page-break-inside: auto !important;
         }
+        .section-label { font-size: 9px !important; }
+        .aspek-table .section-label { font-size: 9px !important; }
     }
 </style>
 @endpush
@@ -124,13 +127,13 @@
                     <table class="table table-bordered" style="width:100%;table-layout:fixed;margin-bottom:0;">
                         <thead>
                             <tr>
-                                <th style="width:14%;text-align:left; vertical-align:top;">Taraf</th>
-                                <th style="width:12%;text-align:center;">Borderline<br>70-79</th>
-                                <th style="width:12%;text-align:center;">Dibawah Rata-Rata<br>80-89</th>
-                                <th style="width:12%;text-align:center;">Rata-Rata<br>90-109</th>
-                                <th style="width:12%;text-align:center;">Diatas Rata-Rata<br>110-119</th>
-                                <th style="width:12%;text-align:center;">Superior<br>120-139</th>
-                                <th style="width:12%;text-align:center;">Very Superior<br>140-169</th>
+                                <th style="width:22%;text-align:left; vertical-align:top;">Taraf</th>
+                                <th style="width:13%;text-align:center;">Borderline<br>70-79</th>
+                                <th style="width:13%;text-align:center;">Dibawah Rata-Rata<br>80-89</th>
+                                <th style="width:13%;text-align:center;">Rata-Rata<br>90-109</th>
+                                <th style="width:13%;text-align:center;">Diatas Rata-Rata<br>110-119</th>
+                                <th style="width:13%;text-align:center;">Superior<br>120-139</th>
+                                <th style="width:13%;text-align:center;">Very Superior<br>140-169</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -163,17 +166,27 @@
                 $aspekCCount = count($aspekCFields);
             @endphp
             <div class="table-responsive">
-                <table class="table table-bordered aspek-table">
+                <table class="table table-bordered aspek-table" style="table-layout:fixed;width:100%;">
+                    <colgroup>
+                        <col style="width:18%;">
+                        <col style="width:46%;">
+                        <col style="width:5%;">
+                        <col style="width:5%;">
+                        <col style="width:5%;">
+                        <col style="width:5%;">
+                        <col style="width:5%;">
+                        <col style="width:5%;">
+                    </colgroup>
                     <thead class="table-light">
                         <tr>
-                            <th width="15%"></th>
-                            <th width="35%">ASPEK PSIKOLOGIS</th>
-                            <th width="8%" style="text-align:center;">A<br><small>1</small></th>
-                            <th width="8%" style="text-align:center;">B<br><small>2</small></th>
-                            <th width="8%" style="text-align:center;">C<br><small>3</small></th>
-                            <th width="8%" style="text-align:center;">D<br><small>4</small></th>
-                            <th width="8%" style="text-align:center;">E<br><small>5</small></th>
-                            <th width="10%" style="text-align:center;">N/A</th>
+                            <th></th>
+                            <th>ASPEK PSIKOLOGIS</th>
+                            <th style="text-align:center;">A<br><small>1</small></th>
+                            <th style="text-align:center;">B<br><small>2</small></th>
+                            <th style="text-align:center;">C<br><small>3</small></th>
+                            <th style="text-align:center;">D<br><small>4</small></th>
+                            <th style="text-align:center;">E<br><small>5</small></th>
+                            <th style="text-align:center;">N/A</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -182,7 +195,7 @@
                         @foreach($aspekAFields as $field => $label)
                         <tr>
                             @if($first)
-                            <td rowspan="{{ $aspekACount }}" class="section-label" style="font-size:14px;font-weight:600;vertical-align:middle;">A. Kemampuan<br>Intelektual Umum</td>
+                            <td rowspan="{{ $aspekACount }}" class="section-label">A. Kemampuan<br>Intelektual Umum</td>
                             @php $first = false; @endphp
                             @endif
                             <td>{{ $label }}</td>
@@ -202,7 +215,7 @@
                         @foreach($aspekBFields as $field => $label)
                         <tr>
                             @if($first)
-                            <td rowspan="{{ $aspekBCount }}" class="section-label" style="font-size:14px;font-weight:600;vertical-align:middle;">B. Kemampuan<br>Khusus</td>
+                            <td rowspan="{{ $aspekBCount }}" class="section-label">B. Kemampuan<br>Khusus</td>
                             @php $first = false; @endphp
                             @endif
                             <td>{{ $label }}</td>
@@ -222,7 +235,7 @@
                         @foreach($aspekCFields as $field => $label)
                         <tr>
                             @if($first)
-                            <td rowspan="{{ $aspekCCount }}" class="section-label" style="font-size:14px;font-weight:600;vertical-align:middle;">C. Kepribadian Dan<br>Sikap Kerja</td>
+                            <td rowspan="{{ $aspekCCount }}" class="section-label">C. Kepribadian Dan<br>Sikap Kerja</td>
                             @php $first = false; @endphp
                             @endif
                             <td>{{ $label }}</td>

@@ -54,7 +54,7 @@
                 </div>
                 <div class="row g-3">
                     {{-- SEARCH INPUT & CHECKBOX --}}
-                    <div class="col-lg-6 col-md-12">
+                    <div class="col-lg-4 col-md-12">
                         <label for="search" class="form-label">
                             <i class="bi bi-search me-1"></i>Cari Pelamar
                         </label>
@@ -98,7 +98,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-3 col-md-6 col-6">
+                    <div class="col-lg-3 col-md-4 col-6">
                         <label for="tipe" class="form-label"><i class="bi bi-person-badge me-1"></i>Tipe Pelamar</label>
                         <select class="form-select" id="tipe" name="tipe">
                             <option value="">Semua Tipe</option>
@@ -107,7 +107,7 @@
                             <option value="reguler" {{ request('tipe') == 'reguler' ? 'selected' : '' }}>👤 Reguler</option>
                         </select>
                     </div>
-                    <div class="col-lg-3 col-md-6 col-6">
+                    <div class="col-lg-3 col-md-4 col-6">
                         <label for="status" class="form-label"><i class="bi bi-flag me-1"></i>Status</label>
                         <select class="form-select" id="status" name="status">
                             <option value="">Semua Status</option>
@@ -115,6 +115,18 @@
                             <option value="tested" {{ request('status') == 'tested' ? 'selected' : '' }}>✅ Sudah Test</option>
                             <option value="accepted" {{ request('status') == 'accepted' ? 'selected' : '' }}>🎉 Diterima</option>
                             <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>🚫 Ditolak</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <label for="color_code" class="form-label"><i class="bi bi-palette me-1"></i>Warna</label>
+                        <select class="form-select" id="color_code" name="color_code">
+                            <option value="">Semua Warna</option>
+                            <option value="merah" {{ request('color_code') == 'merah' ? 'selected' : '' }}>🔴 Merah</option>
+                            <option value="kuning" {{ request('color_code') == 'kuning' ? 'selected' : '' }}>🟡 Kuning</option>
+                            <option value="biru" {{ request('color_code') == 'biru' ? 'selected' : '' }}>🔵 Biru</option>
+                            <option value="hijau" {{ request('color_code') == 'hijau' ? 'selected' : '' }}>🟢 Hijau</option>
+                            <option value="hitam" {{ request('color_code') == 'hitam' ? 'selected' : '' }}>⚫ Hitam</option>
+                            <option value="abu-abu" {{ request('color_code') == 'abu-abu' ? 'selected' : '' }}>⚪ Abu-abu</option>
                         </select>
                     </div>
                 </div>
@@ -246,6 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('search');
     const tipeSelect = document.getElementById('tipe');
     const statusSelect = document.getElementById('status');
+    const colorCodeSelect = document.getElementById('color_code');
     const tanggalInput = document.getElementById('tanggal');
     const bulanSelect = document.getElementById('bulan');
     const tahunSelect = document.getElementById('tahun');
@@ -324,6 +337,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (searchInput && searchInput.value) params.set('search', searchInput.value); else params.delete('search');
         if (tipeSelect && tipeSelect.value) params.set('tipe', tipeSelect.value); else params.delete('tipe');
         if (statusSelect && statusSelect.value) params.set('status', statusSelect.value); else params.delete('status');
+        if (colorCodeSelect && colorCodeSelect.value) params.set('color_code', colorCodeSelect.value); else params.delete('color_code');
 
         // Logic Checkbox
         const keys = Array.from(params.keys());
@@ -417,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    [tipeSelect, statusSelect, bulanSelect, tahunSelect, tanggalInput].forEach(el => {
+    [tipeSelect, statusSelect, colorCodeSelect, bulanSelect, tahunSelect, tanggalInput].forEach(el => {
         if(el) el.addEventListener('change', () => submitFilter());
     });
     // Radio tanggal_filter

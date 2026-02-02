@@ -42,6 +42,11 @@ class ApplicantController extends Controller
             elseif ($request->tipe === 'reguler') $query->where('is_guru', false)->where('is_pkl', false);
         }
 
+        // Color code filter
+        if ($request->filled('color_code')) {
+            $query->where('color_code', $request->color_code);
+        }
+
         // Date Filter
         $tanggalField = $request->input('tanggal_filter', 'tanggal_test');
         if (!in_array($tanggalField, ['tanggal_test', 'tanggal_lamaran'])) $tanggalField = 'tanggal_test';
@@ -157,6 +162,11 @@ class ApplicantController extends Controller
         // Status filter
         if ($request->filled('status')) {
             $query->where('status', $request->status);
+        }
+
+        // Color code filter
+        if ($request->filled('color_code')) {
+            $query->where('color_code', $request->color_code);
         }
 
         // Date filter - flexible: tanggal spesifik, bulan, atau tahun, dan field dinamis
