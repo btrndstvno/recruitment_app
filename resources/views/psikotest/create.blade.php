@@ -63,7 +63,7 @@
                     </tr>
                     <tr>
                         <th>Alamat</th>
-                        <td>: {{ $applicant->alamat }}</td>
+                        <td>: {{ $applicant->alamat }}{{ $applicant->kota && $applicant->kota !== '-' ? ', ' . $applicant->kota : '' }}{{ $applicant->provinsi && $applicant->provinsi !== '-' ? ', ' . $applicant->provinsi : '' }}</td>
                     </tr>
                     <tr>
                         <th>No. Handphone</th>

@@ -21,48 +21,136 @@
     @media print {
         @page {
             size: 215mm 330mm;
-            margin: 10mm;
+            margin: 4mm 10mm 10mm 10mm; /* top margin 5mm, bottom margin 15mm = 1.5cm */
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
         }
         body {
-            font-size: 10.5px !important;
-            line-height: 1.1 !important;
+            font-size: 11px !important;
+            line-height: 1.25 !important;
+            font-weight: 600 !important;
+            color: #000 !important;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
         }
+        
         .no-print { display: none !important; }
         .container { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
-        .card { border: none !important; box-shadow: none !important; margin: 0 !important; }
-        .card-body { padding: 3px !important; }
-        .card-header { background-color: #ffffff !important; color: #000000 !important; padding: 3px !important; }
-        .card-header h4 { font-size: 14px !important; margin: 0 !important; }
-        h5 { font-size: 11px !important; margin-bottom: 3px !important; padding-bottom: 2px !important; }
-        .table { font-size: 10px !important;  }
-        .table th, .table td { padding: 2px !important; }
-        .aspek-table th, .aspek-table td { padding: 2px !important; }
-        .mb-4 { margin-bottom: 3px !important; }
-        .mb-3 { margin-bottom: 2px !important; }
-        .mt-4 { margin-top: 3px !important; }
-        .mt-3 { margin-top: 2px !important; }
-        .p-3 { padding: 5px !important; }
+        .card { border: none !important; box-shadow: none !important; margin: 0 !important; padding-top: 0 !important; }
+        .card-body { padding: 3px 5px !important; }
+        .card-header { 
+            background-color: #ffffff !important; 
+            color: #000000 !important; 
+            padding: 0 5px 3px 5px !important;
+            margin: 0 0 3px 0 !important;
+        }
+        .card-header h4 { 
+            font-size: 15px !important; 
+            font-weight: 700 !important; 
+            margin: 0 !important; 
+        }
+        h5 { 
+            font-size: 11px !important; 
+            font-weight: 700 !important; 
+            margin-bottom: 4px !important; 
+            padding-bottom: 2px !important; 
+        }
+        
+        /* Table styles - font lebih besar, spacing lebih lebar */
+        .table { font-size: 11px !important; font-weight: 600 !important; margin-bottom: 4px !important; }
+        .table th, .table td { padding: 3.5px 4px !important; }
+        .aspek-table th, .aspek-table td { padding: 3px 4px !important; font-size: 10.5px !important; }
+        
+        /* Spacing adjustments */
+        .mb-4 { margin-bottom: 5px !important; }
+        .mb-3 { margin-bottom: 4px !important; }
+        .mb-2 { margin-bottom: 3px !important; }
+        .mt-4 { margin-top: 5px !important; }
+        .mt-3 { margin-top: 4px !important; }
+        .mt-2 { margin-top: 3px !important; }
+        .p-3 { padding: 6px !important; }
+        .pb-2, .pb-1 { padding-bottom: 2px !important; }
+        
         .alert { display: none !important; }
         .row { margin: 0 !important; }
-        .table-borderless th, .table-borderless td { padding: 2.5px 0 !important; }
-        .keterangan-skala { font-size: 8px !important; margin: 4px 0 !important; }
-        .keterangan-skala table td { padding-right: 12px !important; padding-top: 2px !important; }
-        .page-one-content { page-break-inside: avoid; }
-        .kesimpulan-box {
-            padding: 10px !important;
-            font-size: 10px !important;
-            min-height: 80px !important;
-            page-break-inside: auto !important;
+        
+        /* Header info table */
+        .table-borderless { margin-bottom: 3px !important; }
+        .table-borderless th, .table-borderless td { 
+            padding: 2.5px 0 !important; 
+            font-weight: 600 !important;
+            font-size: 10.5px !important;
         }
-        .section-label { font-size: 9px !important; }
-        .aspek-table .section-label { font-size: 9px !important; }
+        .table-borderless th {
+            width: 25% !important;
+        }
+        
+        /* Nama applicant lebih besar */
+        .applicant-name {
+            font-size: 13px !important;
+            font-weight: 700 !important;
+        }
+        
+        .keterangan-skala { 
+            font-size: 9px !important; 
+            font-weight: 600 !important; 
+            margin: 4px 0 !important; 
+        }
+        .keterangan-skala table td { padding-right: 12px !important; padding-top: 1px !important; }
+        
+        /* Kesimpulan box - Tipe 34: min-height 2cm, bisa expand jika konten panjang */
+        .kesimpulan-box {
+            padding: 8px !important;
+            font-size: 10.5px !important;
+            font-weight: 600 !important;
+            min-height: 13mm !important; 
+            /* height dihapus agar bisa expand menyesuaikan konten */
+        }
+        
+        .section-label { font-size: 10px !important; font-weight: 700 !important; }
+        .aspek-table .section-label { font-size: 10px !important; }
+        
+        /* IQ Table */
+        .iq-table th, .iq-table td {
+            padding: 3px 4px !important;
+            font-size: 9.5px !important;
+        }
+        
+        .header-info-row {
+            margin-bottom: 3px !important;
+        }
+
+        /* All text should be dark/black */
+        * {
+            color: #000 !important;
+        }
+        
+        /* Khusus untuk Tipe 38 - hanya aspek table lebih kecil */
+        .report-type-38 .aspek-table th, 
+        .report-type-38 .aspek-table td { 
+            padding: 2.5px 3px !important; 
+            font-size: 10px !important;
+        }
+        /* Kesimpulan box - Tipe 38: min-height 1.5cm, bisa expand jika konten panjang */
+        .report-type-38 .kesimpulan-box {
+            min-height: 10mm !important; /* 1.5cm */
+            /* height dihapus agar bisa expand menyesuaikan konten */
+            padding: 6px !important;
+        }
+        .report-type-38 .keterangan-skala {
+            margin: 2px 0 !important;
+        }
     }
 </style>
 @endpush
 
 @section('content')
+@php
+    $reportType = $report->report_type ?? '34';
+@endphp
 <div class="d-flex justify-content-between align-items-center mb-4 no-print">
     <h2><i class="bi bi-file-text me-2"></i>Laporan Psikotest</h2>
     <div>
@@ -80,23 +168,23 @@
     </div>
 </div>
 
-<div class="card mb-4">
+<div class="card mb-4 {{ $reportType == '38' ? 'report-type-38' : 'report-type-34' }}">
     <div class="card-header text-center">
         <h4 class="mb-0">LAPORAN PSIKOTEST</h4>
     </div>
     <div class="card-body">
         <div class="page-one-content">
             {{-- Header Info --}}
-            <div class="row mb-4">
+            <div class="row mb-4 header-info-row">
                 <div class="col-md-8">
                     <table class="table table-borderless table-sm">
                         <tr>
                             <th width="30%">Nama</th>
-                            <td>: {{ $applicant->nama_lengkap }}</td>
+                            <td class="applicant-name">: <strong>{{ $applicant->nama_lengkap }}</strong></td>
                         </tr>
                         <tr>
                             <th>Alamat</th>
-                            <td>: {{ $applicant->alamat }}</td>
+                            <td>: {{ $applicant->alamat }}{{ $applicant->kota && $applicant->kota !== '-' ? ', ' . $applicant->kota : '' }}{{ $applicant->provinsi && $applicant->provinsi !== '-' ? ', ' . $applicant->provinsi : '' }}</td>
                         </tr>
                         <tr>
                             <th>No. Handphone</th>
@@ -119,12 +207,12 @@
             </div>
 
             {{-- IQ Section --}}
-            <h5 class="border-bottom pb-2 mb-3 text-primary" style="color: #000 !important;">
+            <h5 class="border-bottom pb-2 mb-3 text-primary kategori-title" style="color: #000 !important;">
                 <span class="w-100 d-block text-center" style="color: #000 !important;">KATEGORI</span>
             </h5>
-            <div class="row mb-4">
+            <div class="row mb-3">
                 <div class="col-12">
-                    <table class="table table-bordered" style="width:100%;table-layout:fixed;margin-bottom:0;">
+                    <table class="table table-bordered iq-table" style="width:100%;table-layout:fixed;margin-bottom:0;">
                         <thead>
                             <tr>
                                 <th style="width:22%;text-align:left; vertical-align:top;">Taraf</th>
@@ -153,7 +241,6 @@
 
             {{-- Aspek Psikologis Table --}}
             @php
-                $reportType = $report->report_type ?? '34';
                 $aspekAFields = \App\Models\PsikotestReport::getAspekAFields();
                 $aspekBFields = $reportType == '38'
                     ? \App\Models\PsikotestReport::getAspekBFields38()
@@ -259,22 +346,22 @@
                 </table>
             </div>
             {{-- Keterangan Skala --}}
-            <div class="mt-3 mb-4 keterangan-skala">
+            <div class="mt-2 mb-2 keterangan-skala">
                 <strong>Keterangan Skala:</strong>
-                <table style="font-size: inherit; margin-top: 2px;">
+                <table style="font-size: inherit; margin-top: 1px;">
                     <tr>
-                        <td style="padding-right: 16px;">A = 1</td>
-                        <td style="padding-right: 16px;">Kurang</td>
-                        <td style="padding-right: 16px;">C = 3</td>
-                        <td style="padding-right: 16px;">Cukup</td>
-                        <td style="padding-right: 16px;">E = 5</td>
+                        <td style="padding-right: 12px;">A = 1</td>
+                        <td style="padding-right: 12px;">Kurang</td>
+                        <td style="padding-right: 12px;">C = 3</td>
+                        <td style="padding-right: 12px;">Cukup</td>
+                        <td style="padding-right: 12px;">E = 5</td>
                         <td>Baik</td>
                     </tr>
                     <tr>
-                        <td style="padding-right: 16px;">B = 2</td>
-                        <td style="padding-right: 16px;">Hampir Cukup</td>
-                        <td style="padding-right: 16px;">D = 4</td>
-                        <td style="padding-right: 16px;">Cukup Baik</td>
+                        <td style="padding-right: 12px;">B = 2</td>
+                        <td style="padding-right: 12px;">Hampir Cukup</td>
+                        <td style="padding-right: 12px;">D = 4</td>
+                        <td style="padding-right: 12px;">Cukup Baik</td>
                         <td></td>
                         <td></td>
                     </tr>
@@ -282,7 +369,7 @@
             </div>
         </div>
         {{-- Kesimpulan dan Saran --}}
-        <h5 class="border-bottom pb-2 mb-3 text-primary" style="color: #000 !important;">
+        <h5 class="border-bottom pb-1 mb-2 text-primary kesimpulan-title" style="color: #000 !important;">
             Kesimpulan dan Saran
         </h5>
         <div class="p-3 bg-light border rounded kesimpulan-box">

@@ -31,7 +31,12 @@ class ImportController extends Controller
         $path = $file->getPathname();
         
         // Ambil ekstensi asli file (xlsx/csv)
-        $type = $file->getClientOriginalExtension(); 
+        $type = $file->getClientOriginalExtension();
+
+        // Cek apakah file XLSX dan ekstensi zip tersedia
+        if (strtolower($type) === 'xlsx' && !class_exists('ZipArchive')) {
+            return back()->with('error', 'Server tidak mendukung file XLSX (ekstensi PHP zip tidak aktif). Silakan convert file ke format CSV terlebih dahulu, atau aktifkan ekstensi zip di php.ini server.');
+        }
 
         // 2. BACA HEADER & FORCE SNAKE CASE
         $reader = SimpleExcelReader::create($path, $type)->headersToSnakeCase(true);
@@ -105,7 +110,28 @@ class ImportController extends Controller
                 $appNum = $row['applicant_number'] ?? null;
                 if (!$appNum) continue;
 
+                // Validasi: applicant_number harus berupa angka
+                // Jika nilai float dari Excel (misal 6034.00), konversi ke int dulu sebelum preg_replace
+                // agar tidak menjadi 603400
+                if (is_numeric($appNum)) {
+                    $appNum = (int) $appNum;
+                } else {
+                    // Bersihkan dari karakter non-numerik (Rp, koma, titik, spasi)
+                    $appNum = preg_replace('/[^0-9]/', '', (string)$appNum);
+                }
+                
+                if (empty($appNum) || !is_numeric($appNum)) {
+                    Log::warning('SKIP ROW: applicant_number bukan angka', ['raw' => $row['applicant_number'] ?? null]);
+                    continue;
+                }
+                $appNum = (int) $appNum;
+
                 $fullName = trim(($row['first_name'] ?? '') . ' ' . ($row['middle_name'] ?? '') . ' ' . ($row['last_name'] ?? ''));
+                
+                // Skip jika nama kosong (kemungkinan baris kosong/header)
+                if (empty($fullName) || $fullName === '  ') {
+                    continue;
+                }
 
                 // Sanitasi No HP
                 $noHp1 = $cleanPhone($row['home_phone'] ?? null) ?? '-';
@@ -119,7 +145,13 @@ class ImportController extends Controller
 
                 $applyDate = now();
                 if (!empty($row['apply_date'])) {
-                    try { $applyDate = \Carbon\Carbon::parse($row['apply_date']); } catch (\Exception $e) {}
+                    try { 
+                        $parsedApply = \Carbon\Carbon::parse($row['apply_date']);
+                        // Abaikan tanggal tidak valid (1899/1900 = Excel null date)
+                        if ($parsedApply->year >= 1950) {
+                            $applyDate = $parsedApply;
+                        }
+                    } catch (\Exception $e) {}
                 }
 
 
@@ -170,6 +202,11 @@ class ImportController extends Controller
                             }
                         }
                     }
+                    
+                    // Validasi: abaikan tanggal tidak valid (1899/1900 = Excel null date)
+                    if ($birthDate && $birthDate->year < 1950) {
+                        $birthDate = null;
+                    }
                 }
 
                 // PKL: jika kolom pkl/PKL/Is PKL/PKL Status/PKL_YN isinya 'yes', set is_pkl=true
@@ -216,8 +253,22 @@ class ImportController extends Controller
 
                 // PKL
                 $applicant->is_pkl = $isPkl;
-                $applicant->pkl_awal = $pklAwal ? (\Carbon\Carbon::parse($pklAwal)) : null;
-                $applicant->pkl_akhir = $pklAkhir ? (\Carbon\Carbon::parse($pklAkhir)) : null;
+                
+                // Parsing tanggal PKL dengan penanganan error
+                $parseDateSafe = function($dateVal) {
+                    if (empty($dateVal)) return null;
+                    try {
+                        $parsed = \Carbon\Carbon::parse($dateVal);
+                        // Abaikan tanggal yang tidak valid (1899/1900 = Excel null date)
+                        if ($parsed->year < 1950) return null;
+                        return $parsed;
+                    } catch (\Exception $e) {
+                        return null;
+                    }
+                };
+                
+                $applicant->pkl_awal = $parseDateSafe($pklAwal);
+                $applicant->pkl_akhir = $parseDateSafe($pklAkhir);
                 $applicant->pkl_asal_sekolah = $pklAsalSekolah;
                 $applicant->pkl_jurusan = $pklJurusan;
                 $applicant->pkl_tempat = $pklTempat;
@@ -265,6 +316,10 @@ class ImportController extends Controller
 
         foreach ($rows as $row) {
             $id = $row['applicant_number'] ?? null;
+            // Konversi float dari Excel ke integer (misal 6034.00 -> 6034)
+            if (is_numeric($id)) {
+                $id = (int) $id;
+            }
             $year = (int) preg_replace('/\D/', '', $row['graduation_year'] ?? 0); 
             if (!$id || $year < 1900 || $year > 2100) continue; 
 

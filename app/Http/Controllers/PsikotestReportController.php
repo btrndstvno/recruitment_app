@@ -40,8 +40,8 @@ class PsikotestReportController extends Controller
 
         // Sinkronisasi tanggal_test dengan data applicant
         if (empty($applicant->tanggal_test)) {
-            // Jika applicant belum punya tanggal_test, ambil dari input
-            $validated['tanggal_test'] = $request->input('tanggal_test');
+            // Jika applicant belum punya tanggal_test, ambil dari input atau gunakan hari ini
+            $validated['tanggal_test'] = $request->input('tanggal_test') ?? now()->toDateString();
             $applicant->update([
                 'tanggal_test' => $validated['tanggal_test'],
                 'status' => 'tested',
