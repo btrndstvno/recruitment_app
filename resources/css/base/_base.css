@@ -90,12 +90,69 @@ body.has-sidebar {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 1rem;
+}
+
+.guest-body .container {
+    width: 100%;
+    max-width: 450px;
+    padding: 0;
 }
 
 .guest-body .card {
     border: none;
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-lg);
+    width: 100%;
+}
+
+.guest-body .card-body {
+    padding: 2.5rem;
+}
+
+/* Responsive Login Page */
+@media (max-width: 576px) {
+    .guest-body {
+        padding: 0.75rem;
+        align-items: flex-start;
+        padding-top: 2rem;
+    }
+    
+    .guest-body .card {
+        border-radius: var(--border-radius-md);
+    }
+    
+    .guest-body .card-body {
+        padding: 1.5rem;
+    }
+    
+    .guest-body .card-body h3 {
+        font-size: 1.5rem;
+    }
+    
+    .guest-body .card-body .bi-people-fill {
+        font-size: 2.5rem !important;
+    }
+    
+    .guest-body .btn-lg {
+        padding: 0.625rem 1rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .guest-body {
+        padding: 0.5rem;
+    }
+    
+    .guest-body .card-body {
+        padding: 1.25rem;
+    }
+    
+    .guest-body .input-group-text,
+    .guest-body .form-control {
+        font-size: 0.9rem;
+    }
 }
 
 
