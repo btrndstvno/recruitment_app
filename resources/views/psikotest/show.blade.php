@@ -101,13 +101,13 @@
         }
         .keterangan-skala table td { padding-right: 12px !important; padding-top: 1px !important; }
         
-        /* Kesimpulan box - Tipe 34: min-height 2cm, bisa expand jika konten panjang */
+        /* Kesimpulan box - Tipe 34: height 2cm */
         .kesimpulan-box {
             padding: 8px !important;
             font-size: 10.5px !important;
             font-weight: 600 !important;
             min-height: 13mm !important; 
-            /* height dihapus agar bisa expand menyesuaikan konten */
+            height: 13mm     !important;
         }
         
         .section-label { font-size: 10px !important; font-weight: 700 !important; }
@@ -134,10 +134,10 @@
             padding: 2.5px 3px !important; 
             font-size: 10px !important;
         }
-        /* Kesimpulan box - Tipe 38: min-height 1.5cm, bisa expand jika konten panjang */
+        /* Kesimpulan box - Tipe 38: height 1.5cm */
         .report-type-38 .kesimpulan-box {
             min-height: 10mm !important; /* 1.5cm */
-            /* height dihapus agar bisa expand menyesuaikan konten */
+            height: 10mm !important;
             padding: 6px !important;
         }
         .report-type-38 .keterangan-skala {
@@ -184,7 +184,7 @@
                         </tr>
                         <tr>
                             <th>Alamat</th>
-                            <td>: {{ $applicant->alamat }}{{ $applicant->kota && $applicant->kota !== '-' ? ', ' . $applicant->kota : '' }}{{ $applicant->provinsi && $applicant->provinsi !== '-' ? ', ' . $applicant->provinsi : '' }}</td>
+                            <td>: {{ $applicant->alamat }}</td>
                         </tr>
                         <tr>
                             <th>No. Handphone</th>
