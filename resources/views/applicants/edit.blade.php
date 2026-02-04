@@ -124,7 +124,7 @@
                 <div class="col-md-4 mb-3">
                     <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
                     <input type="text" class="form-control @error('tempat_lahir') is-invalid @enderror" 
-                        id="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir') }}">
+                        id="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir', $applicant->tempat_lahir) }}">
                     @error('tempat_lahir')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -373,7 +373,9 @@
 
         // Flatpickr untuk tanggal lahir & hitung umur otomatis
         flatpickr("#tanggal_lahir", {
-            dateFormat: "d-m-Y",
+            dateFormat: "Y-m-d",       // Format value yang dikirim ke server
+            altInput: true,             // Tampilkan format alternatif ke user
+            altFormat: "d-m-Y",         // Format tampilan untuk user
             locale: "id",
             maxDate: "today",
             allowInput: true,
