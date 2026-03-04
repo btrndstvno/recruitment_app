@@ -21,6 +21,7 @@ class Applicant extends Model
         'no_ktp',
         'tempat_lahir',
         'tanggal_lahir',
+        'umur',
         'gender',
         'tanggal_lamaran',
         'tanggal_test',

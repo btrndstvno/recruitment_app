@@ -143,6 +143,14 @@
         .report-type-38 .keterangan-skala {
             margin: 2px 0 !important;
         }
+
+        /* N/A column: remove horizontal row borders, keep only left+right vertical lines */
+        table.aspek-table.table-bordered > tbody > tr:not(.section-score) > td:last-child {
+            border-top: 0 none transparent !important;
+            border-bottom: 0 none transparent !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
     }
 </style>
 @endpush
@@ -289,7 +297,7 @@
                             @for($i = 1; $i <= 5; $i++)
                             <td style="text-align:center;">@if($report->$field == $i) X @endif</td>
                             @endfor
-                            <td style="text-align:center;">@if($report->$field === null) X @endif</td>
+                            <td style="text-align:center;"></td>
                         </tr>
                         @endforeach
                         <tr class="section-score">
@@ -309,7 +317,7 @@
                             @for($i = 1; $i <= 5; $i++)
                             <td style="text-align:center;">@if($report->$field == $i) X @endif</td>
                             @endfor
-                            <td style="text-align:center;">@if($report->$field === null) X @endif</td>
+                            <td style="text-align:center;"></td>
                         </tr>
                         @endforeach
                         <tr class="section-score">
@@ -329,7 +337,7 @@
                             @for($i = 1; $i <= 5; $i++)
                             <td style="text-align:center;">@if($report->$field == $i) X @endif</td>
                             @endfor
-                            <td style="text-align:center;">@if($report->$field === null) X @endif</td>
+                            <td style="text-align:center;"></td>
                         </tr>
                         @endforeach
                         <tr class="section-score">
