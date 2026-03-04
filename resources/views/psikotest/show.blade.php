@@ -143,14 +143,6 @@
         .report-type-38 .keterangan-skala {
             margin: 2px 0 !important;
         }
-
-        /* N/A column: remove horizontal row borders, keep only left+right vertical lines */
-        table.aspek-table.table-bordered > tbody > tr:not(.section-score) > td:last-child {
-            border-top: 0 none transparent !important;
-            border-bottom: 0 none transparent !important;
-            border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-        }
     }
 </style>
 @endpush
