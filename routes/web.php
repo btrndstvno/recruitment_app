@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [PsikotestReportController::class, 'show'])->name('show');
         Route::get('/edit', [PsikotestReportController::class, 'edit'])->name('edit');
         Route::put('/', [PsikotestReportController::class, 'update'])->name('update');
+        Route::get('/pdf', [PsikotestReportController::class, 'downloadPdf'])->name('pdf');
     });
 
 

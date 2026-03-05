@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Applicant;
 use App\Models\PsikotestReport;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class PsikotestReportController extends Controller
@@ -150,6 +151,26 @@ class PsikotestReportController extends Controller
         }
 
         return view('psikotest.show', compact('applicant', 'report'));
+    }
+
+    /**
+     * Download the psikotest report as PDF.
+     */
+    public function downloadPdf(Applicant $applicant)
+    {
+        $report = $applicant->psikotestReport;
+
+        if (!$report) {
+            return redirect()->route('applicants.show', $applicant)
+                ->with('error', 'Laporan psikotest belum ada.');
+        }
+
+        $pdf = Pdf::loadView('psikotest.pdf', compact('applicant', 'report'));
+        $pdf->setPaper([0, 0, 609.449, 935.433]); // 215mm x 330mm in points
+
+        $filename = 'Psikotest_' . str_replace(' ', '_', $applicant->nama_lengkap) . '.pdf';
+
+        return $pdf->download($filename);
     }
 
     /**
