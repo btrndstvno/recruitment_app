@@ -149,7 +149,14 @@
                     <tbody>
                         {{-- A. Kemampuan Intelektual Umum --}}
                         <tr class="table-secondary">
-                            <td colspan="7"><strong>A. Kemampuan Intelektual Umum</strong></td>
+                            <td colspan="7">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <strong>A. Kemampuan Intelektual Umum</strong>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearSection('A')">
+                                        <i class="bi bi-x-circle me-1"></i>Clear Section A
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
                         @foreach(\App\Models\PsikotestReport::getAspekAFields() as $field => $label)
                         <tr>
@@ -177,7 +184,14 @@
 
                         {{-- B. Kemampuan Khusus --}}
                         <tr class="table-secondary">
-                            <td colspan="7"><strong>B. Kemampuan Khusus</strong></td>
+                            <td colspan="7">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <strong>B. Kemampuan Khusus</strong>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearSection('B')">
+                                        <i class="bi bi-x-circle me-1"></i>Clear Section B
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
                         @php
                             $aspekBFields = $reportType == '38' 
@@ -210,7 +224,14 @@
 
                         {{-- C. Kepribadian Dan Sikap Kerja --}}
                         <tr class="table-secondary">
-                            <td colspan="7"><strong>C. Kepribadian Dan Sikap Kerja</strong></td>
+                            <td colspan="7">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <strong>C. Kepribadian Dan Sikap Kerja</strong>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearSection('C')">
+                                        <i class="bi bi-x-circle me-1"></i>Clear Section C
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
                         @php
                             $aspekCFields = $reportType == '38' 
@@ -360,6 +381,24 @@ document.addEventListener('DOMContentLoaded', function() {
             iqCategory.value = 'borderline';
         }
     });
+
+    // Clear Section function
+    window.clearSection = function(section) {
+        let fields;
+        if (section === 'A') fields = aspekAFields;
+        else if (section === 'B') fields = aspekBFields;
+        else if (section === 'C') fields = aspekCFields;
+        else return;
+
+        fields.forEach(field => {
+            // Select the N/A radio (value="")
+            const naRadio = document.querySelector(`input[name="${field}"][value=""]`);
+            if (naRadio) {
+                naRadio.checked = true;
+            }
+        });
+        updateScores();
+    };
 
     // Make entire table cell clickable for radio buttons
     document.querySelectorAll('.aspek-table td').forEach(td => {
