@@ -246,6 +246,23 @@
                         </label>
                     </div>
                 </div>
+                <div class="col-md-6 mb-3">
+                <div class="form-check">
+                    <input type="hidden" name="is_rma" value="0">
+
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="is_rma"
+                        name="is_rma"
+                        value="1"
+                        {{ old('is_rma') ? 'checked' : '' }}
+                    >
+
+                    <label class="form-check-label" for="is_rma">
+                        <i class="bi bi-tag me-1"></i>RMA
+                    </label>
+                </div>
             </div>
 
             {{-- Data PKL (Hidden by default) --}}

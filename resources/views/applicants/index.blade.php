@@ -104,6 +104,7 @@
                             <option value="">Semua Tipe</option>
                             <option value="guru" {{ request('tipe') == 'guru' ? 'selected' : '' }}>👨‍🏫 Guru</option>
                             <option value="pkl" {{ request('tipe') == 'pkl' ? 'selected' : '' }}>🎓PKL</option>
+                            <option value="rma" {{ request('tipe') == 'rma' ? 'selected' : '' }}> RMA</option>
                             <option value="reguler" {{ request('tipe') == 'reguler' ? 'selected' : '' }}>👤 Reguler</option>
                         </select>
                     </div>

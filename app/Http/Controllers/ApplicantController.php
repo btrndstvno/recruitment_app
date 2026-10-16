@@ -37,9 +37,16 @@ class ApplicantController extends Controller
         // Status & Tipe Filter
         if ($request->filled('status')) $query->where('status', $request->status);
         if ($request->filled('tipe')) {
-            if ($request->tipe === 'guru') $query->where('is_guru', true);
-            elseif ($request->tipe === 'pkl') $query->where('is_pkl', true);
-            elseif ($request->tipe === 'reguler') $query->where('is_guru', false)->where('is_pkl', false);
+            if ($request->tipe === 'guru') {
+                $query->where('is_guru', true);
+            } elseif ($request->tipe === 'pkl') {
+                $query->where('is_pkl', true);
+            } elseif ($request->tipe === 'rma') {
+                $query->where('is_rma', true);
+            } elseif ($request->tipe === 'reguler') {
+                $query->where('is_guru', false)
+                    ->where('is_pkl', false);
+            }
         }
 
         // Color code filter
@@ -95,7 +102,7 @@ class ApplicantController extends Controller
             'id', 'applicant_number', 'nama_lengkap', 'alamat', 'kota', 'provinsi', 'no_hp_1', 'no_hp_2', 'no_ktp',
             'email',
             'tempat_lahir', 'tanggal_lahir', 'gender', 'umur', 'tanggal_lamaran', 'tanggal_test', 'nama_sekolah',
-            'jurusan', 'tahun_lulus', 'ipk', 'is_guru', 'is_pkl', 'pkl_awal', 'pkl_akhir', 'pkl_asal_sekolah',
+            'jurusan', 'tahun_lulus', 'ipk', 'is_guru', 'is_pkl','is_rma', 'pkl_awal', 'pkl_akhir', 'pkl_asal_sekolah',
             'pkl_jurusan', 'pkl_tempat', 'catatan', 'color_code', 'status', 'archived_at', 'created_at', 'updated_at'
         ];
         $callback = function() use ($applicants, $columns) {
@@ -154,10 +161,13 @@ class ApplicantController extends Controller
                 $query->where('is_guru', true);
             } elseif ($request->tipe === 'pkl') {
                 $query->where('is_pkl', true);
+            } elseif ($request->tipe === 'rma') {
+                $query->where('is_rma', true);
             } elseif ($request->tipe === 'reguler') {
-                $query->where('is_guru', false)->where('is_pkl', false);
-            }    
-        }
+                $query->where('is_guru', false)
+                    ->where('is_pkl', false);
+            }
+    }       
 
         // Status filter
         if ($request->filled('status')) {
@@ -247,6 +257,7 @@ class ApplicantController extends Controller
             'ipk' => 'nullable|numeric|min:0|max:5',
             'is_guru' => 'boolean',
             'is_pkl' => 'boolean',
+            'is_rma' => 'boolean',
             'pkl_awal' => 'nullable|required_if:is_pkl,1|date',
             'pkl_akhir' => 'nullable|required_if:is_pkl,1|date|after_or_equal:pkl_awal',
             'pkl_asal_sekolah' => 'nullable|required_if:is_pkl,1|string|max:255',
@@ -291,7 +302,7 @@ class ApplicantController extends Controller
 
         $validated['is_guru'] = $request->has('is_guru');
         $validated['is_pkl'] = $request->has('is_pkl');
-
+        $validated['is_rma'] = $request->boolean('is_rma');
         // Generate applicant_number otomatis (max applicant_number di database + 1) hanya jika tidak ada di input
         if (empty($validated['applicant_number'])) {
             $maxApplicantNumber = \DB::table('applicants')->max('applicant_number');
@@ -348,6 +359,7 @@ class ApplicantController extends Controller
             'ipk' => 'nullable|numeric|min:0|max:5',
             'is_guru' => 'boolean',
             'is_pkl' => 'boolean',
+            'is_rma' => 'boolean',
             'pkl_awal' => 'nullable|required_if:is_pkl,1|date',
             'pkl_akhir' => 'nullable|required_if:is_pkl,1|date|after_or_equal:pkl_awal',
             'pkl_asal_sekolah' => 'nullable|required_if:is_pkl,1|string|max:255',
@@ -363,7 +375,7 @@ class ApplicantController extends Controller
 
         $validated['is_guru'] = $request->has('is_guru');
         $validated['is_pkl'] = $request->has('is_pkl');
-
+        $validated['is_rma'] = $request->boolean('is_rma');
         // Jika tanggal_test diisi, status otomatis jadi 'tested'
         if (!empty($validated['tanggal_test'])) {
             $validated['status'] = 'tested';
@@ -529,9 +541,13 @@ class ApplicantController extends Controller
                 $query->where('is_guru', true);
             } elseif ($request->tipe === 'pkl') {
                 $query->where('is_pkl', true);
+            } elseif ($request->tipe === 'rma') {
+                $query->where('is_rma', true);
             } elseif ($request->tipe === 'reguler') {
-                $query->where('is_guru', false)->where('is_pkl', false);
-            }
+                $query->where('is_guru', false)
+                    ->where('is_pkl', false)
+                    ->where('is_rma', false);
+            }                                               
         }
 
         // Status filter

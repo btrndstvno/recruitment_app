@@ -31,6 +31,7 @@ class Applicant extends Model
         'ipk',
         'is_guru',
         'is_pkl',
+        'is_rma',
         'pkl_awal',
         'pkl_akhir',
         'pkl_asal_sekolah',
@@ -49,6 +50,7 @@ class Applicant extends Model
         'pkl_akhir' => 'date',
         'is_guru' => 'boolean',
         'is_pkl' => 'boolean',
+        'is_rma' => 'boolean',
         'ipk' => 'decimal:2',
         'applicant_number' => 'integer',
      ];
