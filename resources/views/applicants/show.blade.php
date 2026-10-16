@@ -40,6 +40,8 @@
                         <span class="profile-badge"><i class="bi bi-mortarboard"></i> Guru</span>
                     @elseif($applicant->is_pkl)
                         <span class="profile-badge"><i class="bi bi-briefcase"></i> PKL</span>
+                    @elseif($applicant->is_rma)
+                        <span class="profile-badge"><i class="bi bi-tag"></i> RMA</span>
                     @else
                         <span class="profile-badge"><i class="bi bi-person"></i> Reguler</span>
                     @endif
@@ -375,6 +377,8 @@
                     <span class="type-badge guru"><i class="bi bi-mortarboard-fill"></i> Guru</span>
                 @elseif($applicant->is_pkl)
                     <span class="type-badge pkl"><i class="bi bi-briefcase-fill"></i> PKL</span>
+                @elseif($applicant->is_rma)
+                    <span class="type-badge rma"><i class="bi bi-tag"></i> RMA</span>
                 @else
                     <span class="type-badge reguler"><i class="bi bi-person-fill"></i> Reguler</span>
                 @endif
